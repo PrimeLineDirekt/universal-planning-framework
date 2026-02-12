@@ -140,8 +140,9 @@ cp -r universal-planning-framework/.claude/* your-project/.claude/
 
 This gives you:
 - The planning rule (`.claude/rules/universal-planning.md`)
-- `/plan-new` command
-- `/plan-review` command
+- `/plan-new` command - Create a new plan using the 3-stage framework
+- `/interview-plan` command - Interview about an existing plan to find gaps
+- `/plan-review` command - Quality check a plan against v3 standards
 - `planner` agent
 
 ### Option B: Minimal Install
@@ -157,7 +158,7 @@ You can invoke the framework manually by telling Claude "use universal planning 
 
 ## Usage
 
-### Start a new plan
+### Create a new plan from scratch
 ```bash
 /plan-new "Add OAuth login to Next.js app"
 ```
@@ -169,7 +170,19 @@ Claude will:
 4. Generate Stage 2 meta review
 5. Assign quality grade
 
-### Review an existing plan
+### Interview an existing plan to find gaps
+```bash
+/interview-plan path/to/plan.md
+```
+
+Claude will:
+1. Detect domain and scope
+2. Ask 8-15 probing questions based on complexity
+3. Challenge assumptions and gates
+4. Explore edge cases and failure scenarios
+5. Update plan with Decisions, Risks, and Refinements sections
+
+### Review an existing plan for quality
 ```bash
 /plan-review path/to/plan.md
 ```
