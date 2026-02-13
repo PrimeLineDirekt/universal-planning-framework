@@ -134,7 +134,7 @@ Return to Stage 0 (narrowed) when:
 Clone this repo and copy the `.claude/` directory into your project:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/universal-planning-framework
+git clone https://github.com/PrimeLineDirekt/universal-planning-framework
 cp -r universal-planning-framework/.claude/* your-project/.claude/
 ```
 
@@ -151,7 +151,7 @@ Just copy the core rule file:
 
 ```bash
 curl -o .claude/rules/universal-planning.md \
-  https://raw.githubusercontent.com/YOUR_USERNAME/universal-planning-framework/main/.claude/rules/universal-planning.md
+  https://raw.githubusercontent.com/PrimeLineDirekt/universal-planning-framework/main/.claude/rules/universal-planning.md
 ```
 
 You can invoke the framework manually by telling Claude "use universal planning framework" or create your own commands.
@@ -260,6 +260,12 @@ STAGE 2 (Meta):
 REPLAN: Gate fails | Assumption wrong | Buffer exceeded | New blocker | User pivots
 ```
 
+## Learn More
+
+This framework is part of the system behind [Claude Code Mastery](https://primeline.cc/course) - a course on building autonomous AI development systems with Claude Code.
+
+Read the deep-dive: [How I Plan Complex Projects With Claude Code](https://primeline.cc/blog/planning-with-claude-code)
+
 ## Contributing
 
 Found a gap the framework doesn't catch? Open an issue.
@@ -272,4 +278,4 @@ MIT License - see LICENSE file.
 
 ---
 
-**Remember: This is a thinking process, not a template. Adapt it to your needs.**
+**Built by [@PrimeLineAI](https://x.com/PrimeLineAI) - This is a thinking process, not a template. Adapt it to your needs.**
