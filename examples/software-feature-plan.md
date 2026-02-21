@@ -1,7 +1,8 @@
 # Plan: Add OAuth Login to Next.js App
 
 **Created**: 2026-02-13
-**Quality Grade**: B+
+**Quality Grade**: B
+**Confidence Level**: High
 **Estimated Complexity**: 6/10
 
 ---
@@ -95,6 +96,8 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 **Gate**: User completes OAuth flow end-to-end in dev - manual test with real Google/GitHub accounts passes.
 
+**Review Checkpoint (Phases 1-2)**: Review OAuth app configuration and NextAuth.js setup. Verify: no secrets in code (grep check), callback URLs match environment, provider scopes are minimal (principle of least privilege).
+
 ---
 
 ### Phase 3: Update Database Schema
@@ -129,6 +132,8 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 **Gate**: User can link and unlink accounts from profile, error page shows on OAuth failure - manual test with all scenarios.
 
+**Review Checkpoint (Phases 3-5)**: Review database migration, UI components, and account linking logic. Verify: migration is additive (no data loss), UI matches design system, unlink confirmation prevents accidental disconnection, error page covers all OAuth failure scenarios.
+
 ---
 
 ### Phase 6: Testing & Security Audit
@@ -157,6 +162,29 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 - Error page displays correctly on OAuth failure
 - Email/password auth still works (regression check)
 - Mobile responsive design on login and profile pages
+
+**Ongoing Observability**:
+- Monitor OAuth success/failure rates in production (target: >99% success)
+- Alert if OAuth provider error rate exceeds 1% over 5-minute window
+- Track adoption rate of social login vs email/password (weekly dashboard)
+
+---
+
+## Post-Completion Plan
+
+**Monitor (First 2 weeks)**:
+- OAuth success/failure rate dashboard (daily check)
+- New user signup method breakdown (social vs email)
+- Session duration comparison (OAuth users vs email users)
+
+**Maintain**:
+- OAuth provider API changes (check quarterly)
+- Token rotation and security patches
+- User support for account linking issues
+
+**If-Fails Plan**:
+- OAuth success rate drops below 95%: investigate provider status, check callback URLs
+- Adoption below 10% after 1 month: review UX, consider different button placement
 
 ---
 
@@ -196,6 +224,18 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 - Rate limiting on OAuth routes (existing middleware)
 
 **Audit Method**: Security checklist completed in Phase 6, manual code review of auth routes.
+
+---
+
+## Reference Library
+
+| Source | Version/Date | What It Informed | Link |
+|--------|-------------|-----------------|------|
+| NextAuth.js v5 Documentation | v5 stable, checked 2026-02 | Provider configuration, session handling, Account model | https://authjs.dev |
+| Google OAuth 2.0 Guide | Current, checked 2026-02 | OAuth app setup, scopes, redirect URIs | https://developers.google.com/identity/protocols/oauth2 |
+| GitHub OAuth Apps Guide | Current, checked 2026-02 | OAuth app creation, callback URLs, scopes | https://docs.github.com/en/apps/oauth-apps |
+| Prisma Schema Reference | v5, checked 2026-02 | Account model schema, migration patterns | https://www.prisma.io/docs/orm/prisma-schema |
+| OWASP OAuth Security | 2024 edition | Token handling, CSRF prevention, callback validation | https://cheatsheetseries.owasp.org/cheatsheets/OAuth_Cheat_Sheet.html |
 
 ---
 

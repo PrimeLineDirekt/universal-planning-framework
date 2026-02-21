@@ -1,167 +1,192 @@
 ---
-description: Check plan quality against Universal Planning Framework v3 standards
+description: Check plan quality against Universal Planning Framework standards
 argument-hint: [plan-file-path]
 model: sonnet
 ---
 
-# Plan Quality Check Command
+# Plan Quality Review
 
-Read the plan file at `$ARGUMENTS` and evaluate it against the Universal Planning Framework v3 quality standards.
+Read the plan file at `$ARGUMENTS` and evaluate it against Universal Planning Framework standards.
+
+---
 
 ## Check Process
 
-### 1. CORE Sections Check (Required)
+### 1. CORE Sections Check
 
-Verify all 5 CORE sections are present, complete, and v3-compliant:
+Verify all 5 CORE sections are present, complete, and compliant:
 
 **Context & Why:**
-- Is the "why" clear in max 3 sentences?
-- Does it explain what triggered this NOW, not just what it does?
-- Would someone unfamiliar understand the goal in 60 seconds?
+- Clear in max 3 sentences? Explains WHY, not just WHAT?
+- Would someone unfamiliar understand in 60 seconds?
 
 **Success Criteria:**
-- Are outcomes measurable and specific (not "improve" or "better")?
-- Is NOT-scope explicitly defined?
-- Are FAILED conditions present (kill criteria + timeout)?
-- Red flag: If no FAILED condition exists, criteria are too vague.
+- Measurable, specific outcomes (not "improve" or "better")?
+- NOT-scope explicitly defined?
+- FAILED conditions present (kill criteria + timeout)? If missing: Red Flag.
 
 **Assumptions & Validation:**
-- Does every assumption have the triple format: `[assumption] → VALIDATE BY: [method] → IMPACT IF WRONG: [consequence]`?
-- Are there at least 2 assumptions? (Empty = not thinking hard enough)
-- Is there a distinction between approach-level (Stage 0) and implementation-level assumptions?
+- Triple format? `[assumption] -> VALIDATE BY: [method] -> IMPACT IF WRONG: [consequence]`
+- At least 2 assumptions? Empty = Red Flag.
 
 **Phases:**
-- Does every phase have: name, effort estimate (max 3-4h each), deliverable, dependencies, and a binary gate?
-- Are gates verifiable (test passes, metric met, demo works)  - not "code complete" or "looks good"?
-- Is it clear that a failed gate means STOP?
+- Coding domains: scope-based sizing (files, features, tests)? Non-coding: time estimates OK.
+- Binary gates (pass/fail, verifiable - not "code complete" or "looks good")?
+- Review Checkpoints present (every 2 phases for coding, per milestone for non-coding)?
 
 **Verification:**
-- Is it split into Automated + Manual?
-- If Automated is empty: is there a reason why it can't be tested automatically?
-- If Manual is empty: is there a user-facing aspect being ignored?
+- Split into 3 sub-sections: Automated + Manual + Ongoing Observability?
+- If Automated empty: why can't this be tested?
+- If Manual empty: user-facing aspect ignored?
+- If Ongoing Observability empty: how do we know it keeps working?
 
-### 2. Domain Detection
+### 2. End State & Confidence Check
 
-Analyze the plan to determine domain(s):
+- **End State**: Is there a paragraph describing the concrete outcome? (Recommended, not required)
+- **Confidence Level**: High / Medium / Low assigned at plan header?
+  - Low confidence = Phase 1 must be validation sprint
 
-- **Software Development**  - APIs, code, systems, databases
-- **Multi-Agent / AI System**  - agents, orchestration, LLM pipelines, prompts
-- **Business / Strategy**  - process, growth, market, revenue
-- **Content / Marketing**  - campaigns, content, audience, SEO
-- **Construction / Operations**  - physical infrastructure, logistics
-- **Multi-Domain**  - if 2+ domains apply, use union of all relevant sections
+### 3. Domain Detection (8 domains)
 
-### 3. CONDITIONAL Sections Check
+Determine which domain(s) apply:
+- **Software Development** - APIs, code, databases, systems
+- **Multi-Agent / AI System** - agents, orchestration, LLM pipelines
+- **Business / Strategy** - process, growth, market, revenue
+- **Content / Marketing** - campaigns, content, audience, SEO
+- **Infrastructure / DevOps** - CI/CD, servers, monitoring, infrastructure
+- **Data & Analytics** - pipelines, dashboards, data contracts
+- **Research / Exploration** - investigations, experiments, decision-making
+- **Multi-Domain** - if 2+ domains apply, use union
+
+### 4. CONDITIONAL Sections Check
 
 Based on detected domain, verify relevant sections are present:
 
-**Software Development:**
-- Dependencies & Blockers, Risk Assessment, Rollback, Post-Completion Plan (monitoring), Delegation
+**Software Development:** Dependencies, Risk, Rollback, Post-Completion, Delegation, Reference Library
+**Multi-Agent / AI:** Dependencies, Risk, Delegation, Security, Post-Completion, Reference Library
+**Business / Strategy:** Timeline, Budget, Stakeholders, User Validation
+**Content / Marketing:** Timeline, User Validation, Legal, Feedback Architecture
+**Infrastructure / DevOps:** Dependencies, Risk, Rollback, Post-Completion, Resume Protocol, Reference Library
+**Data & Analytics:** Dependencies, Risk, Rollback, Legal, Security, Post-Completion, Reference Library
+**Research / Exploration:** Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
+**Multi-Domain:** Union of all sections from matched domains
 
-**Multi-Agent / AI System:**
-- Dependencies & Blockers, Risk Assessment, Delegation & Team Strategy, Security & Privacy, Post-Completion Plan
+**Additionally check:**
+- >10h effort -> Resume Protocol present?
+- >5 phases or >20h -> Incremental Delivery present?
+- Coding domain with 3+ phases -> Reference Library present?
+- Coding domain -> Review Checkpoints in phases?
+- Multi-file plan with artifact registration -> Completion Gate present?
 
-**Business / Strategy:**
-- Timeline & Deadlines, Budget & Resources, Stakeholder Communication, User/Customer Validation
+### 5. Anti-Pattern Scan (21 total)
 
-**Content / Marketing:**
-- Timeline & Deadlines, User/Customer Validation, Legal & Compliance
+**Core (1-12):**
 
-**Construction / Operations:**
-- Dependencies & Blockers, Risk Assessment, Timeline & Deadlines, Budget & Resources
+| # | Anti-Pattern | Detection |
+|---|-------------|-----------|
+| 1 | Unvalidated Assumptions | Entries without VALIDATE BY |
+| 2 | All-or-Nothing Phases | Unclear scope boundaries or no testable checkpoint |
+| 3 | Vague Success | "improve", "better", "enhance" without metrics |
+| 4 | No Rollback | Irreversible changes without Rollback section |
+| 5 | Plan Ends at Deploy | Last phase is Deploy/Submit, nothing after |
+| 6 | No Resume Protocol | >10h effort without Resume section |
+| 7 | Parallel Without Contracts | Delegation without interface definitions |
+| 8 | Blind Delegation Trust | No verification after delegation |
+| 9 | Skipping Stage 0 | No discovery evidence on complex plan |
+| 10 | First Idea = Final | No alternatives considered |
+| 11 | Zombie Project | No FAILED conditions, no timeout |
+| 12 | Timeline Fantasy | Zero buffer or round-number estimates |
 
-**Multi-Domain:**
-- Union of all sections from matched domains
+**AI-Specific (13-17):**
 
-**For any plan >10h effort:**
-- Resume Protocol (TL;DR, context load order, next action)
+| # | Anti-Pattern | Detection |
+|---|-------------|-----------|
+| 13 | Confidence Without Evidence | Assertions without validation source |
+| 14 | Wrong Level of Detail | Over-detailed in wrong places, vague in critical ones |
+| 15 | Premature Precision | Numbers without citation/baseline |
+| 16 | Hallucinated Effort Estimate | AI work estimated without iteration cycles |
+| 17 | Delegation Without Context Transfer | Agents named but input not specified |
 
-**For any plan >5 phases or >20h effort:**
-- Incremental Delivery (MVP, "good enough" threshold, stopping points)
+**Quality (18-21):**
 
-### 4. Anti-Pattern Scan
+| # | Anti-Pattern | Detection |
+|---|-------------|-----------|
+| 18 | Unverifiable Gates | Judgment words in gates ("good", "acceptable") |
+| 19 | Missing Tool Fallback | Assumes tool availability without fallback |
+| 20 | Discovery Amnesia | Plan references fewer findings than Stage 0 produced |
+| 21 | Assumed Facts | Statements assert facts without source |
 
-Check for these 12 anti-patterns. Each has a specific detection rule:
+### 6. Stage 0 Evidence Check
 
-| # | Anti-Pattern | How to Detect |
-|---|-------------|---------------|
-| 1 | **Unvalidated Assumptions** | Assumption entries without VALIDATE BY method |
-| 2 | **All-or-Nothing Phases** | Any phase estimated at >4h |
-| 3 | **Vague Success** | Success criteria contain "improve", "better", "enhance" without metrics |
-| 4 | **No Rollback** | Irreversible changes with no Rollback section |
-| 5 | **Plan Ends at Deploy** | Last phase is Deploy/Publish/Submit with nothing after |
-| 6 | **No Resume Protocol** | >10h effort without Resume Protocol section |
-| 7 | **Parallel Without Contracts** | Delegation section without interface definitions |
-| 8 | **Blind Delegation Trust** | Delegation without verification step for output |
-| 9 | **Skipping Stage 0** | Plan starts at Phase 1 without any discovery evidence |
-| 10 | **First Idea = Final** | No evidence alternatives were considered (AHA Effect) |
-| 11 | **Zombie Project** | No FAILED conditions, no timeout, no kill criteria |
-| 12 | **Timeline Fantasy** | Zero buffer or all estimates are suspiciously round numbers |
+- Existing work checked (0.1)?
+- Feasibility questioned (0.7)?
+- Alternatives considered - AHA Effect (0.9)?
+- Constraint Discovery done (0.11)?
+- For coding domains: Official Docs consulted (0.3)?
+- If complex plan and no Stage 0 evidence: flag anti-pattern #9
 
-### 5. Stage 0 Evidence Check
+### 7. Semantic Quality Checks
 
-Was discovery done before planning? Look for signs:
+- Numbers have sources (not fabricated)?
+- FAILED conditions are measurable (not judgment)?
+- Gates reference observable outputs?
+- Delegated work has input/output specs?
+- Facts are cited or marked as assumptions?
 
-- References to existing work audit (check 0.1)
-- Evidence that feasibility was questioned (check 0.7)
-- Evidence that alternatives were considered (check 0.9  - AHA Effect)
-- If no Stage 0 evidence: flag anti-pattern #9
+### 8. Cold Start Test
 
-### 6. Quality Scoring
+Could a fresh agent execute this plan with ONLY this document? No oral history, no tribal knowledge? If not: what's missing?
+
+### 9. Discovery Consolidation
+
+If Stage 0 section exists: does every finding appear in the plan (addressed or dismissed)? Flag anti-pattern #20 if findings are orphaned.
+
+### 10. Quality Scoring
 
 **Grade C (Viable):**
-- All 5 CORE sections present
-- At least 1 relevant CONDITIONAL section
-- No critical anti-patterns (#3, #9, #11)
+- All 5 CORE sections present + 1 CONDITIONAL
+- No critical anti-patterns (#3, #9, #11, #20, #21)
 
 **Grade B (Solid):**
-- All 5 CORE sections with v3 formats (FAILED conditions, triple-format assumptions, binary gates, split verification)
-- 3+ relevant CONDITIONAL sections for detected domain
-- Zero anti-patterns
-- Delegation strategy defined
-- Stage 0 evidence present
+- C + Stage 0 done + FAILED conditions + Confidence Level + Constraint Discovery (0.11)
+- Cold Start Test passes
+- Zero anti-patterns across all 21
 
 **Grade A (Excellent):**
-- All CORE sections with measurable specifics in v3 format
-- All relevant CONDITIONAL sections for detected domain(s)
-- Sparring completed (checks 0.7-0.9) with evidence
-- Binary gates on every phase
-- Resume protocol present (if multi-session)
+- B + sparring (0.7-0.9) + People Risk (0.12)
+- Review Checkpoints in phases
+- Reference Library (coding domains)
+- Learning & Knowledge Capture (multi-session)
 - Replanning triggers defined
-- Proactive risk mitigation with detection triggers
 
-**Red Flags (must fix before ANY implementation):**
+**Red Flags (must fix before implementation):**
 - Missing or vague Success Criteria
-- No FAILED conditions (kill criteria)
+- No FAILED conditions
 - Empty Assumptions section
-- No verification method
-- Phases without gates
-- No risks identified
-- Timeline with zero buffer
+- Phases without verifiable gates
+- Numbers without sources
+- FAILED conditions not measurable
+- Delegated work without input/output specs
 
 ---
 
 ## Report Format
 
 ```markdown
-# Plan Quality Report
+# Plan Review Report
 
-**Plan:** [filename]
-**Domain:** [detected domain(s)]
-**Grade:** [C / B / A]
-**Recommendation:** [Proceed / Fix gaps then proceed / Replan from Stage 0]
-
----
+**Plan:** [filename] | **Domain:** [detected] | **Grade:** [C/B/A] | **Confidence:** [H/M/L]
+**Recommendation:** [Proceed / Fix then proceed / Interview first / Replan]
 
 ## CORE Sections
 
-| Section | Status | v3 Compliant? | Issue |
-|---------|--------|---------------|-------|
-| Context & Why | ✅/⚠️/❌ | Yes/No | [specific issue or " -"] |
-| Success Criteria | ✅/⚠️/❌ | Yes/No | [FAILED conditions present?] |
-| Assumptions | ✅/⚠️/❌ | Yes/No | [Triple format used?] |
-| Phases | ✅/⚠️/❌ | Yes/No | [Binary gates present?] |
-| Verification | ✅/⚠️/❌ | Yes/No | [Auto + Manual split?] |
+| Section | Status | Format | Issue |
+|---------|--------|-----------|-------|
+| Context & Why | ok/warn/missing | Yes/No | [specific issue or "-"] |
+| Success Criteria | ok/warn/missing | Yes/No | [FAILED conditions?] |
+| Assumptions | ok/warn/missing | Yes/No | [Triple format?] |
+| Phases | ok/warn/missing | Yes/No | [Binary gates? Review checkpoints?] |
+| Verification | ok/warn/missing | Yes/No | [Auto + Manual + Observability split?] |
 
 ## CONDITIONAL Sections
 
@@ -169,106 +194,66 @@ Based on [domain] domain:
 
 | Section | Status | Notes |
 |---------|--------|-------|
-| [relevant section] | ✅/❌/N/A | [notes] |
-| ... | ... | ... |
+| [section] | present/missing/N/A | [notes] |
 
 ## Stage 0 Evidence
 
 - Existing work checked: [yes/no/unclear]
 - Feasibility questioned: [yes/no/unclear]
 - Alternatives considered: [yes/no/unclear]
-- Overall: [Stage 0 done / Partially done / Skipped]
+- Constraints discovered: [yes/no/unclear]
+- Official docs consulted: [yes/no/unclear/N/A]
+- Stage 0 status: [Done / Partial / Skipped]
 
 ## Anti-Patterns Found
 
-[For each found:]
-- **#[N] [Name]**: [specific example from the plan]
-  → Fix: [concrete action to resolve]
+- **#[N] [Name]**: [specific example from plan]
+  -> Fix: [concrete action]
 
-[Or:]
-No anti-patterns detected.
+## Review Checkpoints
+
+[Present with correct cadence / Present but wrong cadence / Missing]
+
+## Reference Library
+
+[Present with sources / Present but incomplete / Missing (required for domain) / N/A]
 
 ## Red Flags
 
-[For each found:]
-- 🚩 [Description]: [why this blocks implementation]
+- [Issue]: [why this blocks implementation + how to fix]
 
-[Or:]
-No red flags detected.
+## Top 3 Improvements
 
-## Improvement Suggestions
+1. [Highest impact: specific action with example]
+2. [Next: specific action]
+3. [Next: specific action]
 
-[Ordered by impact, max 5:]
+## Bottom Line
 
-1. [Highest impact suggestion with specific action]
-2. [Next suggestion]
-3. [Next suggestion]
-
-## Summary
-
-[2-3 sentences: current grade, what's strong, what needs work, recommended action]
+[1-2 sentences: grade, what's strong, what must be fixed, recommendation]
 ```
 
 ---
 
 ## Replanning Recommendation
 
-If the quality check reveals:
-- 3+ Red Flags
-- Grade below C
-- Multiple CORE sections missing or fundamentally incomplete
-- Stage 0 completely skipped on a complex plan
-
-→ Recommend `/interview-plan` first, or returning to Stage 0 entirely. Don't implement a broken plan.
+If the review reveals:
+- 3+ Red Flags, or Grade below C, or multiple CORE sections missing
+-> Recommend `/interview-plan` first or returning to Stage 0.
 
 ---
 
-## Examples
+## Guidelines
 
-**Good Success Criteria:**
-```
-SUCCESS when:
-- API p95 latency < 200ms for 10K concurrent users
-- Customer churn drops from 8% to 5% within Q2
-
-FAILED when:
-- Memory exceeds 2GB under normal load → kill and redesign
-- Not shipped within 2 weeks → re-evaluate scope
-```
-
-**Bad Success Criteria:**
-- "Make the app faster" (not measurable)
-- "Improve user experience" (no metric)
-- No FAILED conditions at all (zombie project)
-
-**Good Assumptions:**
-```
-- Database handles 5x load without schema changes
-  → VALIDATE BY: Load test in staging
-  → IMPACT IF WRONG: Need migration phase, +1 week
-```
-
-**Bad Assumptions:**
-- (Empty section)
-- "This will work" (no validation method)
-- "Users will like it" (no impact analysis)
-
-**Good Gate:**
-```
-Gate: User can complete checkout flow E2E in staging  - automated test passes
-```
-
-**Bad Gate:**
-```
-Gate: "Code is written" (not verified, not binary)
-```
-
----
+- **Be specific**: Quote problematic text. Not "Success Criteria weak" but "uses 'improve performance' - suggest: 'p95 < 200ms'."
+- **Check format**: Section exists is not enough - check if it follows the framework format (triple assumptions, binary gates, verification split, FAILED conditions).
+- **Be actionable**: Every issue needs a concrete fix.
+- **Be concise**: Report, not essay. Tables and bullets.
+- **Check all 21 anti-patterns**: 12 Core + 5 AI-Specific + 4 Quality.
+- **Check 8 domains**: Software, AI/Agent, Business, Content, Infrastructure, Data, Research, Multi-Domain.
 
 ## Usage
 
 ```bash
-/plan-quality-check path/to/plan.md
+/plan-review path/to/plan.md
 ```
-
-Provides objective assessment against Universal Planning Framework v3 standards. Use before implementation to catch planning gaps early. For deeper exploration, use `/interview-plan` for interactive sparring.

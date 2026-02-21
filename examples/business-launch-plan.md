@@ -1,7 +1,8 @@
 # Plan: Launch Online Coaching Business
 
 **Created**: 2026-02-13
-**Quality Grade**: A-
+**Quality Grade**: A
+**Confidence Level**: High
 **Estimated Complexity**: 7/10
 
 ---
@@ -23,6 +24,12 @@
 - ❌ Deep Research Decision - validation interviews provided sufficient data
 
 **Key Discovery**: The AHA Effect check saved 6 weeks. Custom booking was over-engineering.
+
+---
+
+## End State
+
+After this plan succeeds, a live online coaching business exists: a professional landing page accepts bookings via Calendly, processes payments via Stripe, and sends automated confirmations - all without manual intervention. The founder delivers 1:1 AI strategy sessions to solopreneurs, with a validated pricing model ($179/session), a growing client pipeline from LinkedIn and email, and a clear path from first booking to $1,000/month revenue.
 
 ---
 
@@ -82,13 +89,21 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 
 ## Phases
 
-### Phase 1: Foundation Setup (Week 1)
-**Effort**: 10h | **Dependencies**: None
+### Phase 1a: Payment & Scheduling Setup (Week 1, Part 1)
+**Effort**: 4h | **Dependencies**: None
 
 - Set up Stripe account (business details, bank account)
 - Create product listings for service tiers
 - Set up Calendly Pro account
 - Connect Calendly to Google Calendar
+
+**Gate**: Stripe test checkout succeeds with test card, Calendly creates calendar events.
+
+---
+
+### Phase 1b: Legal & Integration Testing (Week 1, Part 2)
+**Effort**: 3h | **Dependencies**: Phase 1a
+
 - Create event types (30min, 60min, 90min)
 - Generate Terms of Service and Privacy Policy (TermsFeed)
 - Test Stripe checkout with test card
@@ -98,33 +113,51 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 
 ---
 
-### Phase 2: Website Build (Week 2, Part 1)
-**Effort**: 8h | **Dependencies**: Phase 1
+### Phase 2a: Landing Page Design (Week 2, Part 1)
+**Effort**: 4h | **Dependencies**: Phase 1b
 
 - Design landing page in Framer (hero, problem/solution, service cards, testimonials, FAQ, footer)
 - Embed Calendly widget
+
+**Gate**: Landing page renders correctly with Calendly widget embedded, all sections visible.
+
+---
+
+### Phase 2b: Integration & Responsive Testing (Week 2, Part 2)
+**Effort**: 4h | **Dependencies**: Phase 2a
+
 - Link Calendly to Stripe checkout flow
 - Test responsive design on mobile
+- Fix layout issues
 
 **Gate**: Landing page loads under 3 seconds, all links work (no 404s), mobile responsive test passes on 3 devices.
 
 ---
 
-### Phase 3: Integration & Testing (Week 2, Part 2)
-**Effort**: 7h | **Dependencies**: Phase 2
+### Phase 3a: Payment Integration (Week 3, Part 1)
+**Effort**: 4h | **Dependencies**: Phase 2b
 
 - Connect Stripe embedded checkout to landing page
 - Customize Calendly confirmation email template
 - Set up Google Analytics tracking
+
+**Gate**: Stripe checkout flow works end-to-end from landing page, analytics tracking fires on page load and booking events.
+
+---
+
+### Phase 3b: Full Flow Testing & Legal (Week 3, Part 2)
+**Effort**: 3h | **Dependencies**: Phase 3a
+
 - Test full booking flow 3 times (select date -> pay -> confirm)
 - Add legal links (ToS, Privacy) to footer
+- Verify confirmation email delivery
 
 **Gate**: 3 consecutive test bookings succeed without errors - payment processes, calendar event appears, confirmation email delivers within 5 minutes.
 
 ---
 
-### Phase 4: Soft Launch Preparation (Week 3, Part 1)
-**Effort**: 3h | **Dependencies**: Phase 3
+### Phase 4: Soft Launch Preparation (Week 3, Part 3)
+**Effort**: 3h | **Dependencies**: Phase 3b
 
 - Write launch email (340 subscribers)
 - Write LinkedIn announcement post
@@ -135,7 +168,7 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 
 ---
 
-### Phase 5: Launch & Monitor (Week 3, Part 2)
+### Phase 5: Launch & Monitor (Week 3, Part 4)
 **Effort**: 2h initial + ongoing | **Dependencies**: Phase 4
 
 - Send email blast to list
@@ -164,6 +197,12 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 - Review Terms of Service and Privacy Policy for completeness
 - Test refund process (initiate and complete test refund)
 - Walk through client perspective: discovery -> booking -> payment -> confirmation
+
+**Ongoing Observability**:
+- Stripe webhook delivery monitoring (payment success rate)
+- Calendly booking confirmation delivery rate
+- Google Analytics daily active visitors tracking
+- Framer site uptime monitoring (99.9% target)
 
 ---
 
@@ -344,17 +383,34 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 
 ---
 
+## Resume Protocol
+
+**TL;DR**: Launch online coaching business - Framer + Calendly + Stripe stack, $179 single tier, validated by 12 interviews.
+
+**Context Load Order**:
+1. This plan file
+2. Check which phase was last completed (look for completion notes)
+3. Check Stripe/Calendly account status
+
+**Last Completed**: Plan created
+**Next Action**: Phase 1a - Payment & Scheduling Setup
+**Blockers**: None
+
+**Update this section after each work session.**
+
+---
+
 ## Stage 2: Meta Review
 
 **Delegation Strategy**: All work done by founder (critical for voice and positioning). Only delegation opportunity: Legal doc review - ask lawyer friend for informal 30-min review (Phase 1).
 
 **Research Needs**: Before Phase 1 - read Framer + Calendly integration tutorials, Stripe embedded checkout docs. Before Phase 2 - review 3 competitor coaching landing pages for messaging ideas.
 
-**Review Gates**: After Phase 1 (legal setup) - lawyer friend reviews ToS. After Phase 3 (integration complete) - full test booking with real credit card. Before Phase 4 (launch) - show landing page to 3 people in target audience for feedback.
+**Review Gates**: After Phase 1b (legal setup) - lawyer friend reviews ToS. After Phase 3b (integration complete) - full test booking with real credit card. Before Phase 4 (launch) - show landing page to 3 people in target audience for feedback.
 
 **Anti-Pattern Check**:
 - ✅ Assumptions validated (pricing via interviews, platform via testing)
-- ✅ Phases under 4h each (mostly)
+- ✅ Phases under 4h each
 - ✅ Specific success criteria (5 bookings, $1,000 revenue)
 - ✅ FAILED conditions (0 bookings in 2 weeks = pivot)
 - ✅ Rollback strategy defined
@@ -362,6 +418,13 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 - ✅ User validation completed pre-launch
 - ✅ Timeline with buffer
 - ✅ Incremental delivery with natural stopping points
+- ✅ No confidence without evidence - all numbers sourced from interviews or industry benchmarks
+- ✅ Detail level appropriate - more detail on payment/booking flow, less on future phases
+- ✅ Effort estimates include buffer (20%+ built into timeline)
+- ✅ No unverifiable gates - all gates use binary pass/fail criteria
+- ✅ Tool fallbacks noted where relevant (Calendly alternatives if issues arise)
+- ✅ All Stage 0 findings reflected in plan (Discovery Consolidation passes)
+- ✅ All facts sourced (interview data, platform documentation, industry benchmarks)
 
 **Replanning Triggers**: Return to Stage 0 if 0 bookings after 2 weeks (Assumption 1 fails: solopreneurs won't pay) OR Framer + Calendly integration breaks (Assumption 2 fails: platform incompatibility).
 

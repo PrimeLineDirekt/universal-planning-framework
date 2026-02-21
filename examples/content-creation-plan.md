@@ -2,6 +2,7 @@
 
 **Created**: 2026-02-13
 **Quality Grade**: B
+**Confidence Level**: Medium
 **Estimated Complexity**: 6/10
 
 ---
@@ -106,33 +107,73 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ---
 
-### Phase 3: Write New Content (Week 3-4)
-**Effort**: 16h (4h per week) | **Dependencies**: Phase 2
+### Phase 3a: Write Chapter 1 - Introduction & Agent Fundamentals (Week 3)
+**Effort**: 4h | **Dependencies**: Phase 2
 
-- Week 3: Write Chapters 1-3 (Introduction, Architecture, Memory Systems) - 30 pages
-- Week 4: Write Chapters 4-6 (Tool Use, Multi-Agent, Deployment) - 30 pages
+- Write Chapter 1 (Introduction) - foundations, why agents matter, what readers will build
 - Focus on practical patterns over theory
 - Leave placeholder sections for code examples
 
-**Gate**: All 6 chapters drafted (60 pages), placeholder sections marked for code integration, consistent casual tone maintained.
+**Gate**: Chapter 1 complete (~10 pages), consistent casual tone, transitions from repurposed content are smooth.
 
 ---
 
-### Phase 4: Build Code Examples (Week 5, Part 1)
-**Effort**: 8h | **Dependencies**: Phase 3
+### Phase 3b: Write Chapter 2 - Architecture & Memory Systems (Week 3)
+**Effort**: 4h | **Dependencies**: Phase 3a
 
-- Build Example 1: Simple RAG agent (2h)
-- Build Example 2: Function-calling agent (2h)
-- Build Example 3: Memory-equipped agent (2h)
-- Build Example 4: Multi-agent system (1.5h)
-- Build Example 5: Production-ready agent with monitoring (0.5h)
+- Write Chapter 2 (Architecture) and Chapter 3 (Memory Systems)
+- Focus on practical patterns over theory
+- Leave placeholder sections for code examples
 
-**Gate**: All 5 examples run successfully in clean Python 3.11 environment, no dependencies beyond OpenAI/Anthropic + standard libraries, documented with inline comments.
+**Gate**: Chapters 2-3 complete (~20 pages cumulative), architecture diagrams described, memory patterns explained with code pseudocode.
+
+---
+
+### Phase 3c: Write Chapter 4 - Tool Use & Function Calling (Week 4)
+**Effort**: 4h | **Dependencies**: Phase 3b
+
+- Write Chapter 4 (Tool Use) - practical patterns for function calling, tool integration
+- Focus on practical patterns over theory
+- Leave placeholder sections for code examples
+
+**Gate**: Chapter 4 complete (~10 pages), at least 2 practical patterns with code placeholders marked.
+
+---
+
+### Phase 3d: Write Chapters 5-6 - Multi-Agent & Deployment (Week 4)
+**Effort**: 4h | **Dependencies**: Phase 3c
+
+- Write Chapter 5 (Multi-Agent) and Chapter 6 (Deployment)
+- Focus on practical patterns over theory
+- Leave placeholder sections for code examples
+
+**Gate**: All 6 chapters drafted (60 pages total), placeholder sections marked for code integration, consistent casual tone maintained.
+
+---
+
+### Phase 4a: Build Core Examples (Week 5, Part 1)
+**Effort**: 4h | **Dependencies**: Phase 3d
+
+- Build Example 1: Simple RAG agent
+- Build Example 2: Function-calling agent
+- Build Example 3: Memory-equipped agent
+
+**Gate**: Examples 1-3 run successfully in clean Python 3.11 environment, no dependencies beyond OpenAI/Anthropic + standard libraries.
+
+---
+
+### Phase 4b: Build Advanced Examples (Week 5, Part 1)
+**Effort**: 4h | **Dependencies**: Phase 4a
+
+- Build Example 4: Multi-agent system
+- Build Example 5: Production-ready agent with monitoring
+
+**Gate**: All 5 examples run successfully in clean Python 3.11 environment, documented with inline comments.
 
 ---
 
 ### Phase 5: Code Integration & Testing (Week 5, Part 2)
-**Effort**: 2h | **Dependencies**: Phase 4
+**Effort**: 2h | **Dependencies**: Phase 4b
 
 - Add code snippets to chapters
 - Verify syntax highlighting renders correctly
@@ -143,16 +184,25 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ---
 
-### Phase 6: Edit & Polish (Week 6, Part 1)
-**Effort**: 5h | **Dependencies**: Phase 5
+### Phase 6a: Content Editing (Week 6, Part 1)
+**Effort**: 3h | **Dependencies**: Phase 5
 
 - Full editing pass (cut 20%, tighten language)
 - Check for jargon without definitions
 - Verify consistent voice (casual, practical)
+
+**Gate**: Content reduced by 15-20%, no unexplained jargon, voice consistent throughout.
+
+---
+
+### Phase 6b: Final Polish & Formatting (Week 6, Part 1)
+**Effort**: 2h | **Dependencies**: Phase 6a
+
 - Generate table of contents
 - Add learning outcomes to each chapter intro
+- Final proofread
 
-**Gate**: Content polished, no jargon unexplained, consistent voice throughout, TOC generated, under 65 pages total.
+**Gate**: TOC generated with correct page references, learning outcomes present in all 6 chapters, under 65 pages total.
 
 ---
 
@@ -185,6 +235,11 @@ Write and publish a 60-page practical guide on building AI agents for developers
 - Verify Gumroad test purchase delivers PDF correctly
 - Review sales page for typos and broken links
 - Test download on 3 devices (desktop, mobile, tablet)
+
+**Ongoing Observability**:
+- Track engagement metrics weekly (views, shares, comments per post)
+- Monitor SEO rankings monthly for target keywords
+- Alert if any post drops below baseline engagement rate
 
 ---
 
@@ -319,6 +374,23 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ---
 
+## Resume Protocol
+
+**TL;DR**: Write 60-page practical AI agents e-book for developers, $20 on Gumroad, 5 working code examples, validated by 180-person survey.
+
+**Context Load Order**:
+1. This plan file
+2. Google Doc with manuscript (check current chapter progress)
+3. Code examples folder (check which examples are built and tested)
+
+**Last Completed**: Plan created
+**Next Action**: Phase 1 - Outline & Content Audit
+**Blockers**: None
+
+**Update this section after each work session.**
+
+---
+
 ## Stage 2: Meta Review
 
 **Delegation Strategy**: Writing requires personal expertise and voice (cannot delegate). Code examples can be partially delegated - use debugger agent to verify examples run and catch edge cases (Sonnet, complexity 4).
@@ -329,7 +401,7 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 **Anti-Pattern Check**:
 - ✅ Assumptions validated (pricing via survey, length via feedback)
-- ✅ Phases under 4h each (mostly, Week 3-4 writing is 8h per week but spread across 2 weeks)
+- ✅ Phases under 4h each
 - ✅ Specific success criteria (50 sales, $1,000 revenue, 4+ stars)
 - ✅ FAILED conditions (< 20 sales, >10% refunds, <3.5 stars)
 - ✅ Budget tracked with ceiling
