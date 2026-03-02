@@ -13,7 +13,7 @@
 
 **Full install** (recommended - gives you commands, agent, and rule):
 ```bash
-git clone https://github.com/PrimeLineDirekt/universal-planning-framework
+git clone https://github.com/primeline-ai/universal-planning-framework
 cp -r universal-planning-framework/.claude/* your-project/.claude/
 ```
 
@@ -21,7 +21,7 @@ cp -r universal-planning-framework/.claude/* your-project/.claude/
 ```bash
 mkdir -p .claude/rules
 curl -o .claude/rules/universal-planning.md \
-  https://raw.githubusercontent.com/PrimeLineDirekt/universal-planning-framework/main/.claude/rules/universal-planning.md
+  https://raw.githubusercontent.com/primeline-ai/universal-planning-framework/main/.claude/rules/universal-planning.md
 ```
 
 ## What Makes This Different
@@ -195,7 +195,29 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Key requirements:
 - Use grades C/B/A only (no B+, A-, etc.)
 - Coding examples must include a Reference Library
 
-Found a gap the framework doesn't catch? [Open an issue](https://github.com/PrimeLineDirekt/universal-planning-framework/issues).
+Found a gap the framework doesn't catch? [Open an issue](https://github.com/primeline-ai/universal-planning-framework/issues).
+
+## The Ecosystem
+
+UPF is one piece of a progression. Each tier works independently - no hard dependencies.
+
+```
+You're here          You want this            Install this
+-----------          -------------            ------------
+Raw Claude Code  ->  Session memory       ->  Starter System (free)
+                 ->  Workflow skills      ->  + Skills Bundle (free)
+                 ->  Deep planning        ->  + UPF (free) <- you are here
+                 ->  AI-powered system    ->  + Course (paid)
+```
+
+| Component | What It Does | Link |
+|-----------|-------------|------|
+| **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) |
+| **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) |
+| **UPF** | Universal Planning Framework with deep multi-stage planning | You're reading it |
+| **Course** | Kairn + Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
+
+The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version - use it when the stakes are high enough to justify Stage 0 discovery.
 
 ## License
 

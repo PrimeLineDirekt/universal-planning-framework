@@ -27,7 +27,7 @@ Example plans are the best way to contribute. Requirements:
 
 ## Reporting Framework Gaps
 
-Found a gap the framework doesn't catch? [Open an issue](https://github.com/PrimeLineDirekt/universal-planning-framework/issues) with:
+Found a gap the framework doesn't catch? [Open an issue](https://github.com/primeline-ai/universal-planning-framework/issues) with:
 
 1. **Description** of the gap
 2. **Real example** where it caused problems
