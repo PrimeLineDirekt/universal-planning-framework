@@ -207,6 +207,7 @@ You're here          You want this            Install this
 Raw Claude Code  ->  Session memory       ->  Starter System (free)
                  ->  Workflow skills      ->  + Skills Bundle (free)
                  ->  Deep planning        ->  + UPF (free) <- you are here
+                 ->  Deep analysis        ->  + Quantum Lens (free)
                  ->  AI-powered system    ->  + Course (paid)
 ```
 
@@ -215,6 +216,7 @@ Raw Claude Code  ->  Session memory       ->  Starter System (free)
 | **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) |
 | **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) |
 | **UPF** | Universal Planning Framework with deep multi-stage planning | You're reading it |
+| **Quantum Lens** | Multi-perspective analysis + solution engineering (7 cognitive lenses) | [GitHub](https://github.com/primeline-ai/quantum-lens) |
 | **Course** | Kairn + Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
 
 The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version - use it when the stakes are high enough to justify Stage 0 discovery.
