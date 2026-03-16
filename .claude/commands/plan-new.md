@@ -24,14 +24,14 @@ Before starting, ask the user how they want to work:
 
 ```
 AskUserQuestion:
-  "Wie möchtest du den Plan durcharbeiten?"
+  "How would you like to work through the plan?"
   Options:
-    1. "Manuell - ich gehe jede Phase einzeln durch"
-       (User steuert jede Phase, wählt selbst ob Interview self/interactive)
-    2. "Autonom - du machst alles selbstständig"
-       (Alle Phasen autonom, Interview im Self-Mode)
-    3. "Autonom mit interaktivem Interview"
-       (Alle Phasen autonom, aber Interview beantworte ICH)
+    1. "Manual - I'll go through each phase step by step"
+       (User controls each phase, chooses interactive or self-interview)
+    2. "Autonomous - you handle everything independently"
+       (All phases autonomous, interview in self-mode)
+    3. "Autonomous with interactive interview"
+       (All phases autonomous, but I answer the interview myself)
 ```
 
 Store the selected mode and follow it through all stages.
@@ -69,7 +69,7 @@ For each check you run:
 3. Flag anything that changes the approach
 
 **If mode = Manual**: Present findings to user via AskUserQuestion.
-**If mode = Autonom**: Document findings, proceed. Flag critical findings that would change approach.
+**If mode = Autonomous**: Document findings, proceed. Flag critical findings that would change approach.
 
 ---
 
@@ -136,7 +136,7 @@ Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 
 **Reference Library** (mandatory for Software, Data, Infrastructure with 3+ phases): List official docs and best practices consulted. Format: `[source] | [version/date] | [what it informed] | [link]`.
 
 **If mode = Manual**: Ask user which conditional sections to include via AskUserQuestion.
-**If mode = Autonom**: Auto-select based on domain, document selection rationale.
+**If mode = Autonomous**: Auto-select based on domain, document selection rationale.
 
 ---
 
@@ -145,8 +145,8 @@ Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 
 **MANDATORY** - Run `/interview-plan` on the plan file.
 
 **If mode = Manual**: User chooses interactive or self-interview.
-**If mode = Autonom**: Run with `--self` flag (Claude answers own questions).
-**If mode = Autonom mit interaktivem Interview**: Run interactively (user answers).
+**If mode = Autonomous**: Run with `--self` flag (Claude answers own questions).
+**If mode = Autonomous with interactive interview**: Run interactively (user answers).
 
 The interview skill asks framework-aware questions across 3 tiers:
 - Tier 1: Critical gaps (missing FAILED conditions, vague criteria, unvalidated assumptions)
@@ -192,7 +192,7 @@ This runs 7 meta checks as a real agent:
 
 ---
 
-## Stage 4: Output + Abschluss
+## Stage 4: Output + Finalization
 
 Write the complete plan to a file:
 - If `.claude/plans/` exists, write there
@@ -200,150 +200,133 @@ Write the complete plan to a file:
 
 Include at the top: Quality Grade (C/B/A), Confidence Level (High/Medium/Low), date.
 
-### Plan Summary (PFLICHT)
+### Plan Summary (required)
 
 Present a structured summary to the user:
 
 ```markdown
 ## Plan Summary: {title}
 
-**Was wird gebaut/geändert:**
-- {neue Dateien mit Zweck}
-- {geänderte Dateien mit Art der Änderung}
+**What will be built/changed:**
+- {new files with purpose}
+- {changed files with type of change}
 
-**Nutzen:**
-- {konkreter Mehrwert 1}
-- {konkreter Mehrwert 2}
+**Value:**
+- {concrete benefit 1}
+- {concrete benefit 2}
 
-**Phasen:**
+**Phases:**
 | # | Phase | Deliverable | Gate |
 |---|-------|-------------|------|
 | 1 | ... | ... | ... |
 
-**Aufwand**: {geschätzt} | **Files**: {Anzahl neu/geändert} | **LOC**: {geschätzt}
+**Effort**: {estimated} | **Files**: {count new/changed} | **LOC**: {estimated}
 **Confidence**: {High/Medium/Low} | **Grade**: {A/B/C}
 ```
 
-Then ask: "Plan fertig. Soll ich mit der Umsetzung beginnen?"
+Then ask: "Plan complete. Should I start implementing?"
 
 ---
 
 ## Summary: Complete Phase Sequence
 
 ```
-Step 0:     Planning Mode Selection (ask user: manual/autonom/autonom+interview)
-Stage 0.pre: DSV (Decompose-Suspend-Validate on the task)
-Stage 0:    Discovery (12 checks)
-Stage 1:    The Plan (End State, 5 CORE, CONDITIONAL sections)
-Stage 1.5:  Interview (/interview-plan skill - NOT inline)
-Stage 2:    Hardening (/plan-refine skill - NOT inline)
-Stage 3:    Review + Meta (/plan-review skill - NOT inline)
-Stage 4:    Output + "Soll ich umsetzen?"
-```
-
-ALL stages are mandatory. None may be replaced by inline text or self-written notes.
-
----
-
-## Stage 5: Execution Rules (bei Plan-Umsetzung)
-
-Diese Regeln gelten wenn der Plan ausgefuehrt wird. Sie sind auch in `.claude/rules/plan-execution.md` persistent gespeichert (bewusste Duplikation fuer Zuverlaessigkeit).
-
-### Nach JEDER Phase (PFLICHT)
-
-**1. Code Review:**
-- Nach jeder abgeschlossenen Phase MUSS ein Code Review laufen
-- Nutze `superpowers:requesting-code-review` oder `superpowers:code-reviewer` Agent
-- Spec Compliance Review ZUERST, dann Code Quality Review
-- Keine Phase ist "done" ohne bestandenen Review
-
-**2. Core Root Dateien pruefen (Abhaengigkeiten):**
-- `knowledge/references/audit-hidden-dependencies.md` lesen - 6 Consumer Pathways pruefen
-- `knowledge/architecture.md` lesen - Component Connection Pathways pruefen
-- Frage: Hat diese Aenderung Auswirkungen auf andere Komponenten?
-- Pruefen: edges.json, context-router.json, detection-index.json, _stats.json, SYSTEM-MAP.md, knowledge-nodes.json
-- Vollstaendige Matrix: CLAUDE.md → Integration-Matrix
-
-**3. Gate-Ergebnis dokumentieren:**
-- PASS/FAIL + Evidenz (z.B. "BARD: 42/45 TOC-Eintraege = 93%")
-- Scope-Aenderungen notieren
-- Assumptions updaten (validiert/falsifiziert/neu)
-- Token-Kosten kumulativ tracken (wenn LLM-basiert)
-
-**4. Sub-Agents und Teams einsetzen:**
-- Parallele unabhaengige Tasks → parallele Agents
-- Code Review → dedizierter Review-Agent
-- Exploration/Research → Explore Agent (haiku)
-- Delegation Score ≥ 3 → automatisch delegieren (siehe `.claude/rules/delegation.md`)
-
-### Plan-Completion (wenn ALLE Phasen durch sind)
-
-**1. Verification Before Completion:**
-- Kein Completion-Claim ohne frische Verifikation
-- Alle Tests laufen lassen, Output lesen, DANN claimen
-- Siehe `superpowers:verification-before-completion`
-
-**2. Dormant File Scan:**
-- IMMER einen Dormant File Scan durchfuehren bevor "done" deklariert wird
-- Pruefen ob neue Dateien korrekt verlinkt/registriert sind
-- Pruefen ob alte Dateien durch die Aenderungen verwaist sind
-- Symlinks pruefen (keine Circular References)
-
-**3. Abhaengigkeiten und Registrierung:**
-Wenn neue Komponenten erstellt wurden, an allen relevanten Stellen registrieren:
-- `_stats.json` - Counts aktualisiert
-- `_graph/cache/context-router.json` - Keywords fuer Findbarkeit
-- `.claude/detection-index.json` - Plain-text Trigger (wenn Command)
-- `_graph/knowledge-nodes.json` - Entity im Graph
-- `_graph/edges.json` - Beziehungen zu anderen Nodes
-- `.claude/SYSTEM-MAP.md` - Komponenten-Inventar + Changelog
-- `knowledge/index.md` - KB-Index (wenn Template/Pattern/Learning)
-
-**4. Dokumentation:**
-- README-Sections fuer neue Module
-- API-Dokumentation fuer neue Endpoints
-- Inline-Code-Dokumentation wo nicht selbsterklaerend
-
-**5. Speicherung (Log/Memory/Kairn):**
-- `_memory/projects/{project}.json` → Progress, Phase, Next Step updaten
-- `kn_learn` → Signifikante Entscheidungen, Patterns, Gotchas
-- `_memory/experiences/` → Neue Experiences wenn gelernt
-- Handoff erstellen wenn Session endet vor Completion
-
-**6. Replanning bei Gate-Failure:**
-1. Triage - Trigger-Typ klassifizieren
-2. Scope Damage - Welche Phasen betroffen? Kaskade?
-3. Update in Place - `[REPLANNED: reason]` Marker, nie ueberschreiben
-4. Recheck - Anti-Pattern Scan auf geaenderte Sections
-5. Re-confirm Confidence - Fast immer sinkt sie
-6. Resume - Ab erster ungestarteter Phase
-
----
-
-## Plan-Speicherung (PFLICHT)
-
-- Plan MUSS immer als Datei gespeichert werden, UNABHAENGIG ob Plan Mode aktiv ist
-- Speicherort: `~/.claude/plans/` oder Projekt-Verzeichnis
-- Kein Plan darf nur als Chat-Text existieren - bei Compaction/Session-Ende waere er verloren
-- Plan-Datei am Anfang erstellen, nicht am Ende
-
----
-
-## Summary: Complete Phase Sequence (aktualisiert)
-
-```
-Step 0:      Planning Mode Selection (ask user: manual/autonom/autonom+interview)
+Step 0:      Planning Mode Selection (ask user: manual/autonomous/autonomous+interview)
 Stage 0.pre: DSV (Decompose-Suspend-Validate on the task)
 Stage 0:     Discovery (12 checks)
 Stage 1:     The Plan (End State, 5 CORE, CONDITIONAL sections)
 Stage 1.5:   Interview (/interview-plan skill - NOT inline)
 Stage 2:     Hardening (/plan-refine skill - NOT inline)
 Stage 3:     Review + Meta (/plan-review skill - NOT inline)
-Stage 4:     Output + Plan Summary + "Soll ich umsetzen?"
+Stage 4:     Output + Plan Summary + "Should I implement?"
 Stage 5:     Execution (Code Review/Phase, Dependencies, Sub-Agents, Dormant Files, Docs, Memory)
 ```
 
 ALL stages are mandatory. None may be replaced by inline text or self-written notes.
+
+---
+
+## Stage 5: Execution Rules (during plan implementation)
+
+These rules apply when the plan is being executed. They are also persistently stored in `.claude/rules/plan-execution.md` (intentional duplication for reliability).
+
+### After EVERY Phase (required)
+
+**1. Code Review:**
+- After every completed phase, a code review MUST run
+- Use `superpowers:requesting-code-review` or `superpowers:code-reviewer` agent
+- Spec Compliance Review FIRST, then Code Quality Review
+- No phase is "done" without a passing review
+
+**2. Check core root files (dependencies):**
+- Read `knowledge/references/audit-hidden-dependencies.md` - check 6 Consumer Pathways
+- Read `knowledge/architecture.md` - check Component Connection Pathways
+- Question: Does this change affect other components?
+- Check: edges.json, context-router.json, detection-index.json, _stats.json, SYSTEM-MAP.md, knowledge-nodes.json
+- Full matrix: CLAUDE.md → Integration Matrix
+
+**3. Document gate result:**
+- PASS/FAIL + evidence (e.g. "BARD: 42/45 TOC entries = 93%")
+- Note scope changes
+- Update assumptions (validated/falsified/new)
+- Track cumulative token cost (if LLM-based)
+
+**4. Use sub-agents and teams:**
+- Parallel independent tasks → parallel agents
+- Code review → dedicated review agent
+- Exploration/Research → Explore Agent (haiku)
+- Delegation Score >= 3 → auto-delegate (see `.claude/rules/delegation.md`)
+
+### Plan Completion (when ALL phases are done)
+
+**1. Verification Before Completion:**
+- No completion claim without fresh verification
+- Run all tests, read output, THEN claim success
+- See `superpowers:verification-before-completion`
+
+**2. Dormant File Scan:**
+- ALWAYS run a dormant file scan before declaring "done"
+- Check if new files are correctly linked/registered
+- Check if old files became orphaned due to changes
+- Check symlinks (no circular references)
+
+**3. Dependencies and Registration:**
+When new components are created, register them at all relevant locations:
+- `_stats.json` - update counts
+- `_graph/cache/context-router.json` - keywords for discoverability
+- `.claude/detection-index.json` - plain-text triggers (if command)
+- `_graph/knowledge-nodes.json` - entity in graph
+- `_graph/edges.json` - relationships to other nodes
+- `.claude/SYSTEM-MAP.md` - component inventory + changelog
+- `knowledge/index.md` - KB index (if template/pattern/learning)
+
+**4. Documentation:**
+- README sections for new modules
+- API documentation for new endpoints
+- Inline code documentation where not self-explanatory
+
+**5. Persistence (Log/Memory/Kairn):**
+- `_memory/projects/{project}.json` → update progress, phase, next step
+- `kn_learn` → significant decisions, patterns, gotchas
+- `_memory/experiences/` → new experiences if learned
+- Create handoff if session ends before completion
+
+**6. Replanning on gate failure:**
+1. Triage - classify trigger type
+2. Scope damage - which phases affected? Cascade?
+3. Update in place - `[REPLANNED: reason]` marker, never overwrite
+4. Recheck - anti-pattern scan on changed sections
+5. Re-confirm confidence - almost always drops
+6. Resume - from first unstarted phase
+
+---
+
+## Plan Storage (required)
+
+- Plan MUST always be saved as a file, regardless of whether Plan Mode is active
+- Location: `~/.claude/plans/` or project directory
+- No plan may exist only as chat text - it would be lost on compaction/session end
+- Create the plan file at the start, not at the end
 
 ---
 
@@ -359,4 +342,4 @@ ALL stages are mandatory. None may be replaced by inline text or self-written no
 - 21 anti-patterns to check (not 12)
 - 8 domains to detect (not 6)
 - NEVER claim a stage is complete without having actually run the corresponding skill/tool
-- Execution Rules (Stage 5) gelten auch in `.claude/rules/plan-execution.md` (bewusste Duplikation)
+- Execution Rules (Stage 5) are also in `.claude/rules/plan-execution.md` (intentional duplication)
