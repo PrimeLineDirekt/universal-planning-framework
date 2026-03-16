@@ -66,7 +66,9 @@ Runs BEFORE writing a single line of the plan. Not a rigid checklist - a thinkin
 **5 CORE Sections (always required):**
 
 1. **Context & Why** - Why this exists, what problem it solves. Max 3 sentences. NOT "improve X" but WHY improve X.
+   - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details — pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
 2. **Success Criteria** - Measurable outcomes, not activities. Includes NOT-scope and FAILED conditions (kill criteria + timeout). Red flag: if you can't write a FAILED condition, criteria are too vague.
+   - **Acceptance Criteria (GWT)** *(optional)*: Given/When/Then format for testable behavior specs. Complements FAILED conditions: FAILED covers what must NOT happen, GWT covers what MUST happen. Example: *"Given a new user, When they click 'Sign in with Google' and authorize, Then they are redirected to the dashboard with a valid session."* Use when behavior has multiple paths or edge cases worth specifying upfront.
 3. **Assumptions & Validation** - What we're betting on being true. Format: `[assumption] -> VALIDATE BY: [method] -> IMPACT IF WRONG: [consequence]`. Stage 0 = approach-level, this = implementation-level. Red flag: empty section means not thinking hard enough.
    This format operationalizes DSV: decompose into discrete claims, suspend (explore what breaks if wrong), validate each independently.
 4. **Phases** - Ordered stages with dependencies and binary gates. Gate rules: PASS or FAIL only. Must be verifiable. If gate fails - STOP, fix or replan. Bad gate: "Code is written." Good gate: "3 endpoints return valid JSON under test suite."
@@ -324,8 +326,8 @@ STAGE 0 (Before) - 12 Checks:
 
 STAGE 1 (Plan):
   End State: 1 paragraph, concrete outcome
-  CORE:  Context | Success (FAILED) | Assumptions (IMPACT) | Phases (Gates + Review) |
-         Verification (Auto + Manual + Observability)
+  CORE:  Context [+Behavior] | Success (FAILED [+GWT]) | Assumptions (IMPACT) |
+         Phases (Gates + Review) | Verification (Auto + Manual + Observability)
   COND:  Rollback | Risk | Post-Completion | Budget | User Validation | Legal |
          Security | Resume | Incremental | Delegation | Dependencies |
          Related Work | Timeline | Stakeholders | Reference Library | Learning |

@@ -36,6 +36,8 @@ curl -o .claude/rules/universal-planning.md \
 
 **Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
 
+**Behavior specs + acceptance criteria.** Optional Behavior Description (tech-agnostic, what the feature does) and Given/When/Then acceptance criteria give plans testable behavior coverage without forcing a separate spec document.
+
 **Reference Library.** For coding domains, plans must link the official docs they consulted - so the person maintaining the output has the same sources.
 
 **8 domain detection.** Software, AI/Agent, Business, Content, Infrastructure, Data & Analytics, Research, Multi-Domain. Each domain auto-includes relevant sections.
@@ -114,7 +116,9 @@ This works standalone - even without the full framework. Use it before any decis
 
 ### Stage 1: The Plan
 
-**5 CORE sections** (always required): Context & Why, Success Criteria (with FAILED conditions), Assumptions (with VALIDATE BY + IMPACT IF WRONG), Phases (with binary gates + review checkpoints), Verification (Automated + Manual + Ongoing Observability).
+**5 CORE sections** (always required): Context & Why (+ optional Behavior Description), Success Criteria (with FAILED conditions + optional GWT acceptance criteria), Assumptions (with VALIDATE BY + IMPACT IF WRONG), Phases (with binary gates + review checkpoints), Verification (Automated + Manual + Ongoing Observability).
+
+**Optional structured formats**: Behavior Description captures what a feature DOES in tech-agnostic language (3-5 sentences). Given/When/Then acceptance criteria complement FAILED conditions — FAILED covers what must NOT happen, GWT covers what MUST happen.
 
 **18 CONDITIONAL sections** (domain-detected): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Delegation, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Completion Gate.
 

@@ -2,6 +2,16 @@
 
 All notable changes to the Universal Planning Framework are documented here.
 
+## [1.2.1] - 2026-03-16
+
+### Added
+- **Behavior Description** (optional) - tech-agnostic sub-section under Context & Why. Captures what a feature DOES from the user's perspective in 3-5 sentences, without implementation details.
+- **Acceptance Criteria (GWT)** (optional) - Given/When/Then format under Success Criteria. Complements FAILED conditions: FAILED covers what must NOT happen, GWT covers what MUST happen.
+- Updated Quick Reference to reflect new optional formats (`[+Behavior]`, `[+GWT]`)
+
+### Context
+Inspired by Quantum Lens analysis of Spec Driven Development (Julián de Angelis, MercadoLibre). Rather than adopting full spec/plan separation (XL effort), these two atoms extract ~80% of SDD's unique value as lightweight, optional additions to existing CORE sections.
+
 ## [1.2.0] - 2026-03-01
 
 ### Added
