@@ -4,6 +4,9 @@
 [![Version](https://img.shields.io/badge/version-1.2-green.svg)]()
 [![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-orange.svg)]()
 
+
+![universal-planning-framework](assets/hero.png)
+
 **Plans fail because discovery happens too late.** This framework catches gaps that only surface during execution - evolved from 117 real plans + 195 handoffs.
 
 > "Initial idea was a custom booking system (8 weeks). Stage 0 discovered Calendly + Stripe does 90% of it. Shipped in 3 weeks, saved 5 weeks of engineering."
