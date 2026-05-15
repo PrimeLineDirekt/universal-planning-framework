@@ -52,7 +52,7 @@ curl -o .claude/rules/universal-planning.md \
 /plan-new "Add OAuth login to Next.js app"
 ```
 
-Claude runs through 3 stages:
+Claude runs through 4 stages:
 - **Stage 0**: Discovers existing work, checks feasibility, challenges your approach (AHA Effect)
 - **Stage 1**: Builds the plan with 5 CORE sections, domain-specific CONDITIONAL sections, and a confidence level
 - **Stage 1.5**: Autonomously hardens the plan from 6 adversarial perspectives

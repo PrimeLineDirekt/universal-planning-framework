@@ -11,7 +11,7 @@
 
 Critical insights are consistently found AFTER initial planning - during interviews, execution, or post-mortem. What's missing from plans IS what gets discovered painfully during execution.
 
-## Three-Stage Framework
+## Four-Stage Framework
 
 ### Stage 0: Before Plan (Discovery & Sparring)
 
@@ -68,15 +68,18 @@ Runs BEFORE writing a single line of the plan. Not a rigid checklist - a thinkin
 1. **Context & Why** - Why this exists, what problem it solves. Max 3 sentences. NOT "improve X" but WHY improve X.
    - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details — pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
 2. **Success Criteria** - Measurable outcomes, not activities. Includes NOT-scope and FAILED conditions (kill criteria + timeout). Red flag: if you can't write a FAILED condition, criteria are too vague.
+   - **Quality bar for FAILED conditions** *(holdout-verified 2026-05-13)*: each FAILED condition must have a MEASURABLE threshold AND a TIMEOUT. Bad: "if it doesn't work, abort". Good: "if test pass rate < 80% after 3 days, abort". Vague conditions without measurable threshold or timeout do NOT count.
    - **Acceptance Criteria (GWT)** *(optional)*: Given/When/Then format for testable behavior specs. Complements FAILED conditions: FAILED covers what must NOT happen, GWT covers what MUST happen. Example: *"Given a new user, When they click 'Sign in with Google' and authorize, Then they are redirected to the dashboard with a valid session."* Use when behavior has multiple paths or edge cases worth specifying upfront.
 3. **Assumptions & Validation** - What we're betting on being true. Format: `[assumption] -> VALIDATE BY: [method] -> IMPACT IF WRONG: [consequence]`. Stage 0 = approach-level, this = implementation-level. Red flag: empty section means not thinking hard enough.
+   - **Quality bar for triples** *(holdout-verified 2026-05-13)*: VALIDATE BY needs a CONCRETE method ("run pytest suite", "check ADR-0042", "interview the domain expert") not generic ("check it"). IMPACT IF WRONG needs a SPECIFIC consequence ("Phase 3 has to redo X", "rollback to tag Y, lose 2h work") not generic ("could cause problems").
    This format operationalizes DSV: decompose into discrete claims, suspend (explore what breaks if wrong), validate each independently.
 4. **Phases** - Ordered stages with dependencies and binary gates. Gate rules: PASS or FAIL only. Must be verifiable. If gate fails - STOP, fix or replan. Bad gate: "Code is written." Good gate: "3 endpoints return valid JSON under test suite."
+   - **Quality bar for gates** *(holdout-verified 2026-05-13)*: subjective words like "good", "acceptable", "ready", "complete", "done" do NOT count as binary gates. The gate must reference an observable artifact ("file X exists with N lines", "all 5 endpoints return 200 in <500ms", "pytest exits 0 with coverage >= 70%").
 5. **Verification** - How to prove it worked. Split into three sub-sections:
-   - **Automated** (point-in-time): Tests, CI, linters - proves "it works at ship time"
-   - **Manual** (point-in-time): Reviews, walkthroughs, demos - catches what automated can't
-   - **Ongoing Observability**: Production metrics, alerts, health checks - proves "it keeps working"
-   - If Automated empty - "Why can't this be tested?" If Manual empty - "User-facing aspect ignored?"
+   - **Automated** (point-in-time): Tests, CI, linters - proves "it works at ship time". Name the specific test command or check.
+   - **Manual** (point-in-time): Reviews, walkthroughs, demos - catches what automated can't. Name the specific walkthrough or review type.
+   - **Ongoing Observability**: Production metrics, alerts, health checks - proves "it keeps working". Name the specific dashboard, alert, or health endpoint.
+   - If Automated empty - "Why can't this be tested?" If Manual empty - "User-facing aspect ignored?" If a sub-section uses generic language ("run tests", "review code"), specify which.
 
 **Phase sizing:**
 - **Coding domains** (Software, AI, Data, Infrastructure): Size by scope (files touched, features delivered, tests passing), not hours. Hours create false precision when AI executes the plan.

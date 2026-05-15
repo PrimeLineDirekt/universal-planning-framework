@@ -12,7 +12,7 @@ Follow the Universal Planning Framework. Execute ALL stages in order. No stage m
 
 ## STRICT READ-ONLY RULE
 
-During `/plan-new` execution, ONLY the plan file may be edited. No other files may be created, edited, or deleted. No Bash commands that make changes. Only: Read, Grep, Glob, Explore/Plan Agents, AskUserQuestion, Skill (for interview/refine/review). Violation = abort planning.
+During `/plan-new` execution, ONLY the plan file may be edited. No other files may be created, edited, or deleted. No Bash commands that make changes. Only: Read, Grep, Glob, Explore/Plan Agents, AskUserQuestion, Skill (for interview/refine/review), TodoWrite (for phase/task tracking). Violation = abort planning.
 
 This replaces EnterPlanMode/ExitPlanMode to avoid repeated UI previews that clutter the screen.
 
@@ -248,7 +248,7 @@ ALL stages are mandatory. None may be replaced by inline text or self-written no
 
 ## Stage 5: Execution Rules (during plan implementation)
 
-These rules apply when the plan is being executed. They are also persistently stored in `.claude/rules/plan-execution.md` (intentional duplication for reliability).
+These rules apply when the plan is being executed. They are also persistently stored in `knowledge/rules/workflow/plan-execution.md` (intentional duplication for reliability).
 
 ### After EVERY Phase (required)
 
@@ -342,4 +342,4 @@ When new components are created, register them at all relevant locations:
 - 21 anti-patterns to check (not 12)
 - 8 domains to detect (not 6)
 - NEVER claim a stage is complete without having actually run the corresponding skill/tool
-- Execution Rules (Stage 5) are also in `.claude/rules/plan-execution.md` (intentional duplication)
+- Execution Rules (Stage 5) are also in `knowledge/rules/workflow/plan-execution.md` (intentional duplication)
