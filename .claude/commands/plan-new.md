@@ -73,6 +73,16 @@ For each check you run:
 
 ---
 
+## Stage 0.5: Vehicle Selection (silent auto-inference - runs on EVERY plan)
+
+After Discovery, before drafting phases, run the **execution-vehicle rubric** (`.claude/rules/vehicle-selection.md`) for every phase the plan will have. This is **ALWAYS silent auto-inference** - NEVER ask the user which vehicle to use, on any plan, trivial or not (an interactive vehicle prompt is a kill criterion).
+
+For each phase the rubric emits: (a) a **VEHICLE** (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) from raw signals (complexity, independent-stream count, decomposition shape, reversibility), with an optional adaptive delegation score as a BOUNDED tiebreaker (single-agent<->sub-agent boundary only); (b) for multi-agent vehicles, the **model tier per stage** (strongest model for orchestration/synthesis only, mid-tier for delegated work, fast/local model for simple or bulk steps).
+
+**Output discipline (collapse-when-uniform):** the most-common (vehicle, routing) across phases becomes the plan-level `Default Vehicle` header line; phases matching it render nothing; only deviations render a one-line tag. A uniform plan shows one line, a trivial 1-phase plan shows `Default Vehicle: Single (self)` - both with zero prompts. Vehicles flagged propose/opt-in (dynamic workflow) or ask-user (agent team, tmux) carry that flag as a trigger-time note, never a planning-time prompt.
+
+---
+
 ## Stage 1: The Plan
 
 After Stage 0, build the plan.
@@ -180,7 +190,7 @@ The agent fixes issues in place and notes strategic concerns.
 **MANDATORY** - Run `/plan-review` on the plan file.
 
 This runs 7 meta checks as a real agent:
-1. Delegation Strategy
+1. Execution Vehicle & Routing (validate Stage 0.5 vehicles + routing)
 2. Research Needs
 3. Review Gates
 4. Anti-Pattern Check (21 anti-patterns: 12 Core + 5 AI + 4 Quality)
@@ -234,6 +244,7 @@ Then ask: "Plan complete. Should I start implementing?"
 Step 0:      Planning Mode Selection (ask user: manual/autonomous/autonomous+interview)
 Stage 0.pre: DSV (Decompose-Suspend-Validate on the task)
 Stage 0:     Discovery (12 checks)
+Stage 0.5:   Vehicle Selection (silent per-phase vehicle + Default Vehicle; NEVER prompts)
 Stage 1:     The Plan (End State, 5 CORE, CONDITIONAL sections)
 Stage 1.5:   Interview (/interview-plan skill - NOT inline)
 Stage 2:     Hardening (/plan-refine skill - NOT inline)

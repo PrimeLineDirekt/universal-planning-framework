@@ -37,6 +37,8 @@ curl -o .claude/rules/universal-planning.md \
 
 **Autonomous hardening (Stage 1.5).** Run `/plan-refine` and 6 adversarial perspectives stress-test your plan without asking you a single question. The Pedantic Lawyer catches vague gates. The Devil's Advocate challenges your core assumption. You get back a hardened plan with a change log.
 
+**Execution vehicle selection.** A plan decides not just *what* to do but *how each phase runs* - the optimal execution vehicle (single agent, parallel sub-agents, an agent team, a background session, a dynamic multi-agent workflow, or a goal-loop) plus the model tier per stage. It is inferred silently as a planning output, never via a prompt - so trivial plans stay frictionless while complex ones get the orchestration they need. `/plan-review` then flags an under-specified vehicle or a stage routed to a needlessly expensive model. [See below.](#execution-vehicle-selection)
+
 **Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
 
 **Behavior specs + acceptance criteria.** Optional Behavior Description (tech-agnostic, what the feature does) and Given/When/Then acceptance criteria give plans testable behavior coverage without forcing a separate spec document.
@@ -144,7 +146,24 @@ Structural fixes applied in place. Strategic decisions flagged as `[Stage 1.5 No
 
 ### Stage 2: Meta (7 Checks)
 
-Delegation Strategy, Research Needs, Review Gates, Anti-Pattern Check (21), Cold Start Test, Plan Hygiene Protocol, Discovery Consolidation.
+Execution Vehicle Validation, Research Needs, Review Gates, Anti-Pattern Check (21), Cold Start Test, Plan Hygiene Protocol, Discovery Consolidation.
+
+### Execution Vehicle Selection
+
+After discovery, before drafting phases, the framework infers the best **execution vehicle** for each phase and records it as a plan output - collapsing to a single `Default Vehicle` line when the whole plan is uniform, and rendering only the phases that deviate:
+
+| Vehicle | When |
+|---------|------|
+| **Single agent** | low complexity, one stream of work, or a step the user must see / an irreversible side-effect |
+| **Sub-agent(s)** | mid complexity, one to a few independent units (run in parallel when independent) |
+| **Agent team** | several interdependent streams that genuinely need inter-agent communication |
+| **Background session** | long-running work that needs monitoring |
+| **Dynamic workflow** | codebase-wide audit, large migration, or fan-out research that needs adversarial verification |
+| **Goal-loop** | work-until-a-condition with an unknown iteration count |
+
+Raw signals (complexity, independent-stream count, whether the work-list is known up front, reversibility) drive the choice; an optional adaptive delegation score only breaks ties at the single-agent/sub-agent boundary, so it can never over-escalate to a heavy vehicle. Selection is **always silent** - there is no interactive vehicle prompt on any plan.
+
+For multi-agent vehicles the plan also names the **model tier per stage**: the strongest model for orchestration/synthesis only, a mid-tier model for delegated work, and a fast or local model for simple or bulk-transform steps. `/plan-review` flags a multi-agent vehicle with no routing plan, or a cheap bulk step routed to an expensive model. Full rubric: [`.claude/rules/vehicle-selection.md`](.claude/rules/vehicle-selection.md).
 
 ## Domain Detection
 

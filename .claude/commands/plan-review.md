@@ -169,6 +169,15 @@ If Stage 0 section exists: does every finding appear in the plan (addressed or d
 - FAILED conditions not measurable
 - Delegated work without input/output specs
 
+### 11. Execution Vehicle & Routing Check
+
+Every plan carries a **Default Vehicle** (from Stage 0.5; rubric `.claude/rules/vehicle-selection.md`) + optional per-phase deviation tags. Check:
+- Is there a `Default Vehicle` line? (missing = Stage 0.5 was skipped)
+- Does each phase's vehicle fit its raw signals? Flag an obvious mismatch (a 1-file trivial phase tagged dynamic-workflow = over-vehicled; a 5-independent-stream phase tagged single = under-vehicled).
+- **Multi-agent vehicle (parallel sub-agents / agent team / dynamic workflow / tmux) with NO model-routing block = flag** (under-parameterized). Each stage must name its model tier.
+- **Model routing sane**: a cheap bulk/transform stage routed to the strongest (most expensive) model = flag; the strongest model used as a *delegation target* rather than self/orchestrator-only = flag.
+- Any interactive vehicle-selection prompt in the plan = **Red Flag** (selection must be silent).
+
 ---
 
 ## Report Format
