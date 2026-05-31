@@ -269,6 +269,11 @@ These rules apply when the plan is being executed. They are also persistently st
 - Spec Compliance Review FIRST, then Code Quality Review
 - No phase is "done" without a passing review
 
+**1b. Empirical verification - does it actually WORK? (required EVERY phase):**
+- A phase is NOT done on "code written" / "tests added" / "committed" alone. Run or trigger what the phase built under realistic conditions, observe the real effect, and confirm a downstream consumer can actually use it (the 3-leg proof: trigger -> effect -> consumer).
+- Paste the outcome evidence into the gate result. Inferred outcomes ("should work", "the doc says so") do NOT count.
+- If a leg genuinely cannot be tested yet, record it as deferred-and-untested with a reason (disclosed at Plan Completion).
+
 **2. Check core root files (dependencies):**
 - Read `knowledge/references/audit-hidden-dependencies.md` - check 6 Consumer Pathways
 - Read `knowledge/architecture.md` - check Component Connection Pathways
@@ -290,10 +295,12 @@ These rules apply when the plan is being executed. They are also persistently st
 
 ### Plan Completion (when ALL phases are done)
 
-**1. Verification Before Completion:**
-- No completion claim without fresh verification
-- Run all tests, read output, THEN claim success
-- See `superpowers:verification-before-completion`
+**1. Verification Before Completion + final re-check:**
+- No completion claim without fresh verification. Run all tests, read output, THEN claim success (`superpowers:verification-before-completion`).
+- **Re-verify EVERY phase gate actually PASSED** with its evidence (not just "the work was done"). Produce an explicit final status: either "all phases DONE + verified" OR a listed set of OPEN ITEMS. Never declare done while any gate is unproven.
+
+**1b. Deferred & follow-up disclosure (required before declaring done):**
+- Anything that could NOT be completed - a verification left untested, a phase only partially done, an issue found-but-unfixed - MUST be recorded as a follow-up task AND in the closeout, stating WHAT it is and WHY (a short reason: time-dependent / external-blocker / risky-no-rollback / needs-design / out-of-scope). Never silently drop it. If nothing was deferred, say so explicitly.
 
 **2. Dormant File Scan:**
 - ALWAYS run a dormant file scan before declaring "done"
