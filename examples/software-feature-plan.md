@@ -4,6 +4,7 @@
 **Quality Grade**: B
 **Confidence Level**: High
 **Estimated Complexity**: 6/10
+**Default Vehicle**: Single (self) - the OAuth/secrets/account-linking core is security-sensitive (the critical-credentials gate keeps it on self). Deviations render on the genuinely delegatable phases (DB migration review, UI styling, unit tests). See the Execution Vehicle & Orchestration section.
 
 ---
 
@@ -102,6 +103,7 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 ### Phase 3: Update Database Schema
 **Effort**: 1h | **Dependencies**: Phase 2
+> Vehicle: Sub-Agent (Sonnet) for the migration review - an engineer-traits agent verifies the migration is additive (no data loss), complexity ~4. The migration itself runs on self.
 
 - Add NextAuth.js Account model to Prisma schema
 - Run migration in dev environment
@@ -113,6 +115,7 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 ### Phase 4: Update Login Page UI
 **Effort**: 2h | **Dependencies**: Phase 3
+> Vehicle: Sub-Agent (Haiku) - button styling to match the design system is low-complexity, no secret handling. The OAuth wiring behind the buttons stays on self.
 
 - Add "Sign in with Google" and "Sign in with GitHub" buttons
 - Style to match existing design system
@@ -138,6 +141,7 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 ### Phase 6: Testing & Security Audit
 **Effort**: 2h | **Dependencies**: Phase 5
+> Vehicle: Sub-Agent (Sonnet) for the unit/integration tests (debugger agent); the security checklist + manual review stay on self (security-critical = the critical gate keeps the audit non-delegated).
 
 - Run unit and integration tests
 - Complete security checklist (see Verification section)
@@ -239,25 +243,28 @@ Enable users to log in via Google and GitHub OAuth in addition to existing email
 
 ---
 
-## Delegation & Team Strategy
+## Execution Vehicle & Orchestration
 
-**Can Delegate** (complexity 3-5):
-- Unit test implementation - delegate to `debugger` agent (Sonnet)
-- UI component styling - delegate to `feature-dev:frontend` agent (Haiku)
-- Prisma migration review - delegate to `engineer` traits agent (Sonnet)
+**Default Vehicle**: Single (self) - the security-critical core stays on self (critical-credentials gate). Per-phase deviations to Sub-Agents render where the work is genuinely delegatable.
 
-**Cannot Delegate** (complexity 6+, security-critical):
-- OAuth provider configuration - security-sensitive, must review personally
-- Account linking logic - core business logic
+**Sub-Agent deviations** (vehicle + model routing):
+- Unit/integration tests (Phase 6) - Sub-Agent, `debugger` agent (Sonnet), complexity ~4
+- UI component styling (Phase 4) - Sub-Agent, `feature-dev:frontend` agent (Haiku), complexity ~2
+- Prisma migration review (Phase 3) - Sub-Agent, `engineer` traits agent (Sonnet), complexity ~4
+
+**Stay on Single/self** (security-critical, the critical gate keeps these non-delegated):
+- OAuth provider configuration (Phase 2) - secrets + callback URLs, review personally
+- Account linking logic (Phase 5) - core business logic
 - Error handling design - UX-critical
+- Security checklist + audit (Phase 6) - security-sensitive
 
-**Verification of Delegated Work**: All delegated code must pass manual spot-check + automated test suite before merge.
+**Verification of delegated output**: every Sub-Agent's code must pass a manual spot-check + the automated test suite before merge (interface contract: the agent returns the diff + a passing test run).
 
 ---
 
 ## Stage 2: Meta Review
 
-**Delegation Strategy**: Phases 1-2 done by lead (critical), Phases 4-5 can parallelize UI work to frontend specialist, Phase 6 requires lead review.
+**Execution Vehicle & Orchestration**: Default Vehicle = Single (self) - Phases 1-2 + 5-6 stay on self (security-critical: OAuth config, account-linking logic, security audit). Deviations: Phase 3 migration review + Phase 4 UI styling + Phase 6 unit tests delegate to Sub-Agents (see the Execution Vehicle & Orchestration section). Phases 4-5 UI work can run in parallel.
 
 **Research Needs**: Phase 1 requires reading NextAuth.js v5 OAuth docs, Google OAuth scopes, GitHub OAuth scopes. Phase 4 may need UI design pattern research.
 

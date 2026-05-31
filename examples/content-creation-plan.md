@@ -4,6 +4,7 @@
 **Quality Grade**: B
 **Confidence Level**: Medium
 **Estimated Complexity**: 6/10
+**Default Vehicle**: Single (self) - the writing is voice-bound and cannot be delegated. Deviation: the code-example build phases (4a, 4b) run as parallel Sub-Agents with a verify pass (see their tags).
 
 ---
 
@@ -153,6 +154,7 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ### Phase 4a: Build Core Examples (Week 5, Part 1)
 **Effort**: 4h | **Dependencies**: Phase 3d
+> Vehicle: Sub-Agent (Sonnet, up to 3 parallel) - Examples 1-3 are independent code builds (no shared state, no author voice), each ~complexity 4. A debugger sub-agent then verifies each runs clean in a fresh Python env.
 
 - Build Example 1: Simple RAG agent
 - Build Example 2: Function-calling agent
@@ -164,6 +166,7 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ### Phase 4b: Build Advanced Examples (Week 5, Part 1)
 **Effort**: 4h | **Dependencies**: Phase 4a
+> Vehicle: Sub-Agent (Sonnet, 2 parallel) - Examples 4-5 (multi-agent + production agent) are independent builds, verified by a debugger sub-agent. Same rationale as 4a.
 
 - Build Example 4: Multi-agent system
 - Build Example 5: Production-ready agent with monitoring
@@ -393,7 +396,7 @@ Write and publish a 60-page practical guide on building AI agents for developers
 
 ## Stage 2: Meta Review
 
-**Delegation Strategy**: Writing requires personal expertise and voice (cannot delegate). Code examples can be partially delegated - use debugger agent to verify examples run and catch edge cases (Sonnet, complexity 4).
+**Execution Vehicle & Orchestration**: Default Vehicle = Single (self) - the writing requires personal expertise and voice (cannot delegate, and chapters cross-reference each other so they need one coherent pass). Deviation: the code-example builds (Phases 4a, 4b) run as parallel Sub-Agents (Sonnet), each verified by a debugger sub-agent to catch edge cases. Voice-bound prose stays on self; verifiable code parallelizes.
 
 **Research Needs**: Before Phase 1 - review top 5 Gumroad technical e-books for sales page patterns, read "Writing for Developers" guide. Before Phase 3 - review latest OpenAI and Anthropic docs for API updates.
 

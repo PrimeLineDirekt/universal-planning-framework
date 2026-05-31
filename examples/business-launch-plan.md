@@ -4,6 +4,7 @@
 **Quality Grade**: A
 **Confidence Level**: High
 **Estimated Complexity**: 7/10
+**Default Vehicle**: Single (self) - a solo founder executes these business steps directly; no agent fan-out, so the plan is uniform and collapses to this one line.
 
 ---
 
@@ -402,7 +403,7 @@ Launch a coaching business offering 1:1 AI implementation strategy sessions for 
 
 ## Stage 2: Meta Review
 
-**Delegation Strategy**: All work done by founder (critical for voice and positioning). Only delegation opportunity: Legal doc review - ask lawyer friend for informal 30-min review (Phase 1).
+**Execution Vehicle & Orchestration**: Default Vehicle = Single (self) for every phase - all work done by the founder (critical for voice and positioning), so the plan is uniform with no per-phase deviations. Only hand-off opportunity: Legal doc review - ask a lawyer friend for an informal 30-min review (Phase 1).
 
 **Research Needs**: Before Phase 1 - read Framer + Calendly integration tutorials, Stripe embedded checkout docs. Before Phase 2 - review 3 competitor coaching landing pages for messaging ideas.
 
