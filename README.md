@@ -39,6 +39,8 @@ curl -o .claude/rules/universal-planning.md \
 
 **Execution vehicle selection.** A plan decides not just *what* to do but *how each phase runs* - the optimal execution vehicle (single agent, parallel sub-agents, an agent team, a background session, a dynamic multi-agent workflow, or a goal-loop) plus the model tier per stage. It is inferred silently as a planning output, never via a prompt - so trivial plans stay frictionless while complex ones get the orchestration they need. `/plan-review` then flags an under-specified vehicle or a stage routed to a needlessly expensive model. [See below.](#execution-vehicle-selection)
 
+**Execution discipline (not just planning).** Plans are executed, not dumbly worked through. A code review runs after every phase; each phase is **empirically verified** - you run or trigger what it built and confirm it actually works, not "code written"; and before a plan is declared done the framework re-checks that every gate truly passed and **discloses anything deferred** (what + why) as a follow-up task - never silently dropped. (Stage 5 execution rules in `.claude/commands/plan-new.md`.)
+
 **Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
 
 **Behavior specs + acceptance criteria.** Optional Behavior Description (tech-agnostic, what the feature does) and Given/When/Then acceptance criteria give plans testable behavior coverage without forcing a separate spec document.
