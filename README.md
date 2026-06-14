@@ -35,7 +35,11 @@ curl -o .claude/rules/universal-planning.md \
 
 **21 anti-patterns with detection rules.** Not guidelines - specific detection rules that catch vague gates ("looks good"), hallucinated estimates, assumed facts, discovery amnesia, and 17 more. Categorized as 12 Core + 5 AI-Specific + 4 Quality.
 
-**Autonomous hardening (Stage 1.5).** Run `/plan-refine` and 6 adversarial perspectives stress-test your plan without asking you a single question. The Pedantic Lawyer catches vague gates. The Devil's Advocate challenges your core assumption. You get back a hardened plan with a change log.
+**Autonomous hardening (Stage 2).** Run `/plan-refine` and 6 adversarial perspectives stress-test your plan without asking you a single question. The Pedantic Lawyer catches vague gates. The Devil's Advocate challenges your core assumption. You get back a hardened plan with a change log.
+
+**Execution vehicle selection.** A plan decides not just *what* to do but *how each phase runs* - the optimal execution vehicle (single agent, parallel sub-agents, an agent team, a background session, a dynamic multi-agent workflow, or a goal-loop) plus the model tier per stage. It is inferred silently as a planning output, never via a prompt - so trivial plans stay frictionless while complex ones get the orchestration they need. `/plan-review` then flags an under-specified vehicle or a stage routed to a needlessly expensive model. [See below.](#execution-vehicle-selection)
+
+**Execution discipline (not just planning).** Plans are executed, not dumbly worked through. A code review runs after every phase; each phase is **empirically verified** - you run or trigger what it built and confirm it actually works, not "code written"; and before a plan is declared done the framework re-checks that every gate truly passed and **discloses anything deferred** (what + why) as a follow-up task - never silently dropped. (Stage 5 execution rules in `.claude/commands/plan-new.md`.)
 
 **Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
 
@@ -52,11 +56,17 @@ curl -o .claude/rules/universal-planning.md \
 /plan-new "Add OAuth login to Next.js app"
 ```
 
-Claude runs through 4 stages:
-- **Stage 0**: Discovers existing work, checks feasibility, challenges your approach (AHA Effect)
-- **Stage 1**: Builds the plan with 5 CORE sections, domain-specific CONDITIONAL sections, and a confidence level
-- **Stage 1.5**: Autonomously hardens the plan from 6 adversarial perspectives
-- **Stage 2**: Meta-checks including Cold Start Test and Discovery Consolidation
+Claude runs through the full 10-step pipeline:
+- **Step 0**: Planning mode selection (manual / autonomous / autonomous-with-interview)
+- **Stage 0.pre**: DSV pre-check - Decompose, Suspend, Validate the key claims before planning
+- **Stage 0**: Discovery - 12 checks across 3 tiers (always / usually / context-dependent), including existing work, feasibility, the AHA Effect, official docs, ROI, constraints, and people risk
+- **Stage 0.5**: Vehicle selection - silently infers execution vehicle + model tier for each phase ([details](#execution-vehicle-selection))
+- **Stage 1**: The plan - 5 CORE sections, up to 18 CONDITIONAL sections, 8 domain detections, confidence level
+- **Stage 1.5**: Interview - 3-tier framework-aware questions via `/interview-plan`
+- **Stage 2**: Hardening - 6 adversarial perspectives stress-test the plan via `/plan-refine`
+- **Stage 3**: Review + Meta - 7 meta checks including the 21 anti-pattern scan and Cold Start Test via `/plan-review`
+- **Stage 4**: Output - writes the plan file with quality grade, default vehicle, and optional verify-report companion
+- **Stage 5**: Execution rules - code review per phase, 3-leg empirical proof per gate, dependency checks, replanning protocol
 
 ### 2. Interview an existing plan
 ```bash
@@ -121,7 +131,7 @@ This works standalone - even without the full framework. Use it before any decis
 
 **5 CORE sections** (always required): Context & Why (+ optional Behavior Description), Success Criteria (with FAILED conditions + optional GWT acceptance criteria), Assumptions (with VALIDATE BY + IMPACT IF WRONG), Phases (with binary gates + review checkpoints), Verification (Automated + Manual + Ongoing Observability).
 
-**Optional structured formats**: Behavior Description captures what a feature DOES in tech-agnostic language (3-5 sentences). Given/When/Then acceptance criteria complement FAILED conditions — FAILED covers what must NOT happen, GWT covers what MUST happen.
+**Optional structured formats**: Behavior Description captures what a feature DOES in tech-agnostic language (3-5 sentences). Given/When/Then acceptance criteria complement FAILED conditions - FAILED covers what must NOT happen, GWT covers what MUST happen.
 
 **18 CONDITIONAL sections** (domain-detected): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Delegation, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Completion Gate.
 
@@ -129,9 +139,19 @@ This works standalone - even without the full framework. Use it before any decis
 
 **Plan Confidence Level**: High / Medium / Low - assigned at plan header. Low confidence = Phase 1 must be a validation sprint.
 
-### Stage 1.5: Autonomous Hardening (Optional)
+### Stage 1.5: Interview
 
-6 adversarial perspectives stress-test the plan:
+Framework-aware questions across 3 tiers, run via `/interview-plan`:
+
+- **Tier 1** - Critical gaps: missing FAILED conditions, vague criteria, unvalidated assumptions
+- **Tier 2** - Domain-specific probes
+- **Tier 3** - Quality strengthening
+
+Runs interactively (user answers) or in self-mode (Claude answers its own questions). Interview findings are applied to the plan before moving to hardening.
+
+### Stage 2: Hardening
+
+6 adversarial perspectives stress-test the plan via `/plan-refine`:
 
 1. **Outside Observer** - Goal clarity, End State, ambiguous metrics
 2. **Pessimistic Risk Assessor** - Single failure points, FAILED condition timeouts
@@ -142,9 +162,26 @@ This works standalone - even without the full framework. Use it before any decis
 
 Structural fixes applied in place. Strategic decisions flagged as `[Stage 1.5 Note:]` for user review. Hardening Log appended as audit trail.
 
-### Stage 2: Meta (7 Checks)
+### Stage 3: Review + Meta (7 Checks)
 
-Delegation Strategy, Research Needs, Review Gates, Anti-Pattern Check (21), Cold Start Test, Plan Hygiene Protocol, Discovery Consolidation.
+Run via `/plan-review`: Execution Vehicle Validation, Research Needs, Review Gates, Anti-Pattern Check (21), Cold Start Test, Plan Hygiene Protocol, Discovery Consolidation.
+
+### Execution Vehicle Selection
+
+After discovery, before drafting phases, the framework infers the best **execution vehicle** for each phase and records it as a plan output - collapsing to a single `Default Vehicle` line when the whole plan is uniform, and rendering only the phases that deviate:
+
+| Vehicle | When |
+|---------|------|
+| **Single agent** | low complexity, one stream of work, or a step the user must see / an irreversible side-effect |
+| **Sub-agent(s)** | mid complexity, one to a few independent units (run in parallel when independent) |
+| **Agent team** | several interdependent streams that genuinely need inter-agent communication |
+| **Background session** | long-running work that needs monitoring |
+| **Dynamic workflow** | codebase-wide audit, large migration, or fan-out research that needs adversarial verification |
+| **Goal-loop** | work-until-a-condition with an unknown iteration count |
+
+Raw signals (complexity, independent-stream count, whether the work-list is known up front, reversibility) drive the choice; an adaptive delegation score only breaks ties at the single-agent/sub-agent boundary, so it can never over-escalate to a heavy vehicle. Selection is **always silent** - there is no interactive vehicle prompt on any plan.
+
+For multi-agent vehicles the plan also names the **model tier per stage**: the strongest model for orchestration/synthesis only, a mid-tier model for delegated work, and a fast or local model for simple or bulk-transform steps. `/plan-review` flags a multi-agent vehicle with no routing plan, or a cheap bulk step routed to an expensive model.
 
 ## Domain Detection
 
@@ -238,10 +275,10 @@ MIT License - see [LICENSE](LICENSE) file.
 
 | Tool | What It Does | Deep Dive |
 |------|-------------|-----------|
-| [**Evolving Lite**](https://github.com/primeline-ai/evolving-lite) | Self-improving Claude Code plugin — memory, delegation, self-correction | [Blog](https://primeline.cc/blog/knowledge-architecture) |
+| [**Evolving Lite**](https://github.com/primeline-ai/evolving-lite) | Self-improving Claude Code plugin - memory, delegation, self-correction | [Blog](https://primeline.cc/blog/knowledge-architecture) |
 | [**Kairn**](https://github.com/primeline-ai/kairn) | Persistent knowledge graph with context routing for AI | [Blog](https://primeline.cc/blog/knowledge-architecture) |
 | [**tmux Orchestration**](https://github.com/primeline-ai/claude-tmux-orchestration) | Parallel Claude Code sessions with heartbeat monitoring | [Blog](https://primeline.cc/blog/tmux-orchestration) |
-| [**UPF**](https://github.com/primeline-ai/universal-planning-framework) | 3-stage planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
+| [**UPF**](https://github.com/primeline-ai/universal-planning-framework) | 10-step planning pipeline with discovery, adversarial hardening, and execution rules | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
 | [**Quantum Lens**](https://github.com/primeline-ai/quantum-lens) | 7 cognitive lenses for multi-perspective analysis | [Blog](https://primeline.cc/blog/quantum-lens-multi-agent-analysis) |
 | [**PrimeLine Skills**](https://github.com/primeline-ai/primeline-skills) | 5 production-grade workflow skills for Claude Code | [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
 | [**Starter System**](https://github.com/primeline-ai/claude-code-starter-system) | Lightweight session memory and handoffs | [Blog](https://primeline.cc/blog/session-management) |
