@@ -108,6 +108,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 - **Resume Protocol** - TL;DR (update each session), context load order, last completed, next action, blockers. *(Activate: >10h effort, multi-session)*
 - **Incremental Delivery** - MVP definition, "good enough" threshold, natural stopping points. *(Activate: >5 phases or >20h effort)*
 - **Delegation & Team Strategy** - Who/what per phase, interface contracts, verification of delegated output. *(Activate: work can be parallelized)*
+- **Execution Vehicle & Orchestration** - per-phase execution vehicle (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) + per-stage model tier, auto-inferred at Stage 0.5. Collapses to one `Default Vehicle` line, renders only deviations; selection is always silent. Rubric: `.claude/rules/vehicle-selection.md`. *(Activate: ALWAYS - every plan gets a Default Vehicle)*
 - **Dependencies & Blockers** - Type, status, fallback, lead time per dependency. *(Activate: external dependencies exist)*
 - **Related Work & Integration** - Project, relationship type, coordination needs. *(Activate: connects to other projects)*
 - **Timeline & Deadlines** - Duration per phase with 20%+ buffer, hard deadline + consequence. *(Activate: hard deadlines exist)*
@@ -149,7 +150,7 @@ Stress-test the plan from 6 adversarial perspectives without human input. Purpos
 
 After creating the plan, run:
 
-1. **Delegation Strategy** - Which parts to sub-agents/teams? What model/agent type per phase?
+1. **Execution Vehicle Validation** - confirm the Stage 0.5 vehicle + per-stage model routing fit each phase's scope; multi-agent vehicles have interface contracts + a routing plan.
 2. **Research Needs** - Which phases need web research during execution? Mark them now.
 3. **Review Gates** - After which phases stop and validate? Confirm gates are in place.
 4. **Anti-Pattern Check** - Quick scan against 21 anti-patterns below. Fix any found.

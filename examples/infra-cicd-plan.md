@@ -4,6 +4,7 @@
 **Quality Grade**: A
 **Confidence Level**: High
 **Estimated Complexity**: 6/10
+**Default Vehicle**: Single (self) - CI/CD workflows handle deploy tokens + secrets, so the rubric's critical/credentials gate keeps execution on self. Only Phase 4 documentation deviates (see its tag).
 
 ---
 
@@ -118,6 +119,7 @@ Set up CI/CD for a 3-package monorepo to automate testing and deployment. Curren
 ### Phase 4: Rollback & Documentation
 **Scope**: 2 files - `.github/workflows/rollback.yml` (new), `docs/ci-cd.md` (new)
 **Deliverable**: One-click rollback workflow + documentation for the team
+> Vehicle: Sub-Agent (Haiku) for the `docs/ci-cd.md` write only - documentation, no secret handling, complexity ~3, safe to delegate. The `rollback.yml` workflow stays on self (deploy-credentials gate).
 **Gate**: Trigger rollback workflow for API service. Previous version is deployed within 2 minutes. Documentation covers: how to read workflow status, how to trigger manual deploy, how to rollback, troubleshooting common failures.
 
 **Review Checkpoint (Phases 3-4)**: Full review of all 4 workflow files. Security check: no tokens in logs, environment protection rules active, rollback tested. Documentation review: covers all scenarios.
@@ -241,7 +243,7 @@ Set up CI/CD for a 3-package monorepo to automate testing and deployment. Curren
 
 ## Stage 2: Meta Review
 
-**Delegation Strategy**: All phases done by lead developer (security-sensitive, small scope). Phase 4 documentation could be delegated to a general-purpose agent (Sonnet, complexity 3).
+**Execution Vehicle & Orchestration**: Default Vehicle = Single (self) - every phase touches deploy tokens / secrets, so the critical-credentials gate keeps execution on self (security-sensitive, small scope). Single deviation: the Phase 4 `docs/ci-cd.md` write (no secret handling, complexity ~3) delegates to a Sub-Agent (Haiku).
 
 **Research Needs**: Phase 1 may need GitHub Actions docs for path filter edge cases. Phase 3 needs Vercel/Railway CLI docs for exact deploy commands.
 
