@@ -171,7 +171,7 @@ If Stage 0 section exists: does every finding appear in the plan (addressed or d
 
 ### 11. Execution Vehicle & Routing Check
 
-Every plan carries a **Default Vehicle** (from Stage 0.5; rubric `.claude/rules/vehicle-selection.md`) + optional per-phase deviation tags. Check:
+Every plan carries a **Default Vehicle** (from Stage 0.5; the rubric is at `.claude/rules/vehicle-selection.md` in a project install, or the `vehicle-selection` skill in a plugin install) + optional per-phase deviation tags. Check:
 - Is there a `Default Vehicle` line? (missing = Stage 0.5 was skipped)
 - Does each phase's vehicle fit its raw signals? Flag an obvious mismatch (a 1-file trivial phase tagged dynamic-workflow = over-vehicled; a 5-independent-stream phase tagged single = under-vehicled).
 - **Multi-agent vehicle (parallel sub-agents / agent team / dynamic workflow / tmux) with NO model-routing block = flag** (under-parameterized). Each stage must name its model tier.
