@@ -1,0 +1,56 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup.sh parses
+        run: bash -n setup.sh
+
+      - name: setup.sh is executable
+        run: test -x setup.sh
+
+      - name: manifests are valid JSON
+        run: |
+          python3 -m json.tool .claude-plugin/plugin.json > /dev/null
+          python3 -m json.tool .claude-plugin/marketplace.json > /dev/null
+
+      # The plugin loader only reads agents from the default `agents/` directory
+      # at the plugin root; a path in plugin.json validates but loads nothing,
+      # and a symlink does not survive the plugin cache copy. So the file exists
+      # twice on purpose, and this step is what keeps the two in step.
+      - name: planner agent copies agree
+        run: diff -u .claude/agents/planner.md agents/planner.md
+
+      - name: no .DS_Store is tracked
+        run: |
+          if git ls-files | grep -q '\.DS_Store$'; then
+            echo "a .DS_Store file is tracked"; exit 1
+          fi
+
+      - name: setup.sh installs into a clean project
+        run: |
+          mkdir -p /tmp/clean-project
+          ./setup.sh /tmp/clean-project --skip-existing
+          test -f /tmp/clean-project/.claude/commands/plan-new.md
+          test -f /tmp/clean-project/.claude/rules/universal-planning.md
+          test -f /tmp/clean-project/.claude/agents/planner.md
+
+      - name: setup.sh never replaces a file the user already has
+        run: |
+          mkdir -p /tmp/used-project/.claude/rules
+          echo "MINE" > /tmp/used-project/.claude/rules/universal-planning.md
+          ./setup.sh /tmp/used-project --skip-existing
+          test "$(cat /tmp/used-project/.claude/rules/universal-planning.md)" = "MINE"
+
+      - name: setup.sh refuses to install into its own checkout
+        run: |
+          if ./setup.sh . --skip-existing; then
+            echo "self-install was not refused"; exit 1
+          fi

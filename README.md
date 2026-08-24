@@ -14,13 +14,26 @@
 
 ## Quick Install
 
-**Full install** (recommended - gives you commands, agent, and rule):
+**As a plugin** (recommended - nothing is copied into your project):
+```bash
+/plugin marketplace add primeline-ai/universal-planning-framework
+/plugin install universal-planning-framework@primeline-upf
+```
+Run both inside Claude Code. Skills arrive namespaced: `/universal-planning-framework:plan-new`.
+Update later with `/plugin marketplace update primeline-upf`.
+
+**Into your project's `.claude/`** (plain files you can read and edit):
 ```bash
 git clone https://github.com/primeline-ai/universal-planning-framework
-cp -r universal-planning-framework/.claude/* your-project/.claude/
+./universal-planning-framework/setup.sh /path/to/your-project
 ```
+`setup.sh` never replaces a file you already have. If one of its file names clashes
+with yours it asks, and skips by default. `--dry-run` shows what it would do,
+`--skip-existing` answers every clash without asking, and `--overwrite` replaces
+after writing a timestamped backup next to each file. Commands land as `/plan-new`
+and friends, with no namespace prefix.
 
-**Minimal install** (rule file only):
+**Minimal** (the rulebook alone, no commands):
 ```bash
 mkdir -p .claude/rules
 curl -o .claude/rules/universal-planning.md \
