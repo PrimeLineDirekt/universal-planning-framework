@@ -2,6 +2,33 @@
 
 All notable changes to the Universal Planning Framework are documented here.
 
+## [1.3.0] - 2026-08-24
+
+Distribution release. The framework content is unchanged; how you get it is not.
+
+### Added
+- **Plugin install.** `.claude-plugin/plugin.json` plus a self-hosted
+  `.claude-plugin/marketplace.json`, so the whole install is
+  `/plugin marketplace add primeline-ai/universal-planning-framework` followed by
+  `/plugin install universal-planning-framework@primeline-upf`. Nothing is copied
+  into your project.
+- **`setup.sh`.** Replaces the old `cp -r` line. It copies file by file and never
+  replaces a file you already have unless you ask, writing a timestamped backup
+  when you do. Flags: `--dry-run`, `--skip-existing`, `--overwrite`. With no
+  terminal attached it skips rather than overwrites.
+- **`skills/universal-planning` and `skills/vehicle-selection`.** Thin loaders that
+  point the plugin at the two rule files. Claude Code plugins have no `rules/`
+  component, so this is how the rulebook reaches a plugin install. The rule files
+  themselves did not move and are still the single source.
+- CI that parses `setup.sh`, validates both manifests, and asserts that a
+  pre-existing user file survives an install.
+
+### Fixed
+- The documented install (`cp -r universal-planning-framework/.claude/* your-project/.claude/`)
+  silently replaced a user's own `.claude/commands/plan-new.md` and any rule file
+  whose name collided.
+- `.claude/.DS_Store` is no longer tracked.
+
 ## [1.2.1] - 2026-03-16
 
 ### Added
