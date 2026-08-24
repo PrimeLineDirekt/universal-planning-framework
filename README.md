@@ -249,18 +249,18 @@ Found a gap the framework doesn't catch? [Open an issue](https://github.com/prim
 UPF is one piece of a progression. Each tier works on its own, with no hard dependencies between them.
 
 ```
-You're here          You want this            Install this
------------          -------------            ------------
-Raw Claude Code  ->  Session memory       ->  Starter System (free)
-                 ->  Workflow skills      ->  + Skills Bundle (free)
-                 ->  Deep planning        ->  + UPF (free) <- you are here
-                 ->  Deep analysis        ->  + Quantum Lens (free)
-                 ->  A self-improving setup -> + Evolving Lite (free)
-                 ->  Memory + knowledge graphs -> + Course (paid)
+You're here          You want this               Install this
+-----------          -------------               ------------
+Raw Claude Code  ->  Session memory          ->  Starter System (free)
+                 ->  Workflow skills         ->  + Skills Bundle (free)
+                 ->  Deep planning           ->  + UPF (free) <- you are here
+                 ->  Deep analysis           ->  + Quantum Lens (free)
+                 ->  A self-improving setup  ->  + Evolving Lite (free)
+                 ->  Memory + graphs, taught ->  + Course (paid)
 ```
 
-| Component | What it does | |
-|-----------|--------------|---|
+| Component | What it does | Links |
+|-----------|--------------|-------|
 | **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) · [Blog](https://primeline.cc/blog/session-management) |
 | **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) · [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
 | **UPF** | This repo. Discovery-first planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
