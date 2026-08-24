@@ -76,7 +76,7 @@ Use the Read tool to load the plan file.
 
 > Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
 
-Additionally: >10h -> Resume Protocol? >5 phases -> Incremental Delivery? Coding 3+ phases -> Reference Library? Multi-file + artifact registration -> Completion Gate?
+Additionally: >10h -> Resume Protocol? >5 phases -> Incremental Delivery? Coding 3+ phases -> Reference Library? Multi-file + artifact registration -> Completion Gate? Grade B/A shipping real artifacts -> Verify Report named as a deliverable?
 
 ### Step 7: Scan for Anti-Patterns (21 total)
 

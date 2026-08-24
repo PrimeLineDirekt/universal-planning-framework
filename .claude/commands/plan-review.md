@@ -81,6 +81,7 @@ Based on detected domain, verify relevant sections are present:
 - Coding domain with 3+ phases -> Reference Library present?
 - Coding domain -> Review Checkpoints in phases?
 - Multi-file plan with artifact registration -> Completion Gate present?
+- Grade B or A and the plan ships real artifacts -> is a Verify Report named as a deliverable? (the report itself is written at Stage 5, so at review time look for the plan naming it, not for the file)
 
 ### 5. Anti-Pattern Scan (21 total)
 

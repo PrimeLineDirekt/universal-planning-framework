@@ -155,7 +155,7 @@ Auto-include based on detected domain:
 > Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
 
 
-Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 phases), Related Work, Stakeholders, Security, Legal, Feedback Architecture, Learning & Knowledge Capture, Completion Gate (multi-file changes, system integration, artifact registration needed).
+Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 phases), Related Work, Stakeholders, Security, Legal, Feedback Architecture, Learning & Knowledge Capture, Verify Report (Grade B/A shipping real artifacts), Completion Gate (multi-file changes, system integration, artifact registration needed).
 
 **Reference Library** (mandatory for Software, Data, Infrastructure with 3+ phases): List official docs and best practices consulted. Format: `[source] | [version/date] | [what it informed] | [link]`.
 
@@ -287,7 +287,7 @@ Stage 1.5:   Interview (/interview-plan skill - NOT inline)
 Stage 2:     Hardening (/plan-refine skill - NOT inline)
 Stage 3:     Review + Meta (/plan-review skill - NOT inline)
 Stage 4:     Output + Plan Summary + "Should I implement?"
-Stage 5:     Execution (Code Review/Phase, Verify Report, Dependencies, Dormant Files, Docs, Memory)
+Stage 5:     Execution (Code Review/Phase, Sub-Agents, Verify Report, Dependencies, Dormant Files, Docs, Memory)
 ```
 
 ALL stages are mandatory. None may be replaced by inline text or self-written notes.
@@ -334,7 +334,7 @@ These rules apply while the plan is being executed, not while it is being writte
 - No completion claim without fresh verification. Run all tests, read output, THEN claim success (`superpowers:verification-before-completion`).
 - **Re-verify EVERY phase gate actually PASSED** with its evidence (not just "the work was done"). Produce an explicit final status: either "all phases DONE + verified" OR a listed set of OPEN ITEMS. Never declare done while any gate is unproven.
 
-**1a. Verify report (if the plan named one at Stage 4):**
+**1a. Verify report (Plan Completion only; if the plan named one at Stage 4):**
 - Write the sibling `<plan-filename>-verify.md` now, before declaring the plan done.
 - One entry per phase, each quoting the gate from the plan verbatim and pasting the trigger, the effect and the consumer evidence.
 - Template: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install.

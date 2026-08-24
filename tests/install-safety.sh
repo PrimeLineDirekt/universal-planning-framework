@@ -33,9 +33,11 @@ chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; 
 # hardcoded, so adding a file to .claude/ does not silently stale this suite.
 # Safe as a count ONLY because case 1b diffs the installed tree against the
 # source independently; a count alone would pass on the wrong files.
-# The filter MUST match setup.sh's collector. A hand-copied subset drifts: an
-# open editor's .swp file would inflate PAYLOAD while setup.sh correctly skips it,
-# and the suite would fail with no installer defect. Derived from setup.sh itself.
+# These six patterns are a DELIBERATE DUPLICATE of setup.sh's collector (its `case`
+# in the collect step) and must be updated in lockstep with it. They are not derived
+# from it: nothing enforces the match. If they drift, an editor's .swp file inflates
+# PAYLOAD while setup.sh correctly skips it, and the suite fails naming an installer
+# defect that does not exist.
 PAYLOAD=$(find "$REPO/.claude" -type f \
   ! -name '.DS_Store' ! -name 'Thumbs.db' \
   ! -name '*.swp' ! -name '*.swo' ! -name '*~' ! -name '.#*' \

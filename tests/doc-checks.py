@@ -48,20 +48,22 @@ def check_markdown_fence_width(path):
 def check_unclosed_fences(path):
     """A fence that is never closed."""
     lines = path.read_text().split("\n")
-    depth_stack = []  # (fence_len, opening_line_no)
+    open_ticks = None   # length of the fence currently open, or None
+    open_line = 0
     for i, line in enumerate(lines, 1):
         m = FENCE.match(line)
         if not m:
             continue
         ticks = len(m.group(1))
-        if depth_stack and ticks == depth_stack[-1][0]:
-            depth_stack.pop()          # closes the block it matches
-        elif depth_stack and ticks < depth_stack[-1][0]:
-            continue                   # shorter fence inside a longer one is content
-        else:
-            depth_stack.append((ticks, i))
-    if depth_stack:
-        failures.append(f"{path}:{depth_stack[-1][1]} fence is never closed")
+        if open_ticks is None:
+            open_ticks, open_line = ticks, i
+        elif ticks >= open_ticks and not m.group(2):
+            # CommonMark: a closing fence is at least as long as its opener and
+            # carries no info string. Anything else, including a LONGER fence used
+            # as content, stays inside the block.
+            open_ticks = None
+    if open_ticks is not None:
+        failures.append(f"{path}:{open_line} fence is never closed")
 
 
 def check_conditional_count():
@@ -79,9 +81,19 @@ def check_conditional_count():
     else:
         print(f"rulebook CONDITIONAL count agrees with its list ({actual})")
     for p in COUNT_ASSERTERS:
-        for n in {int(x) for x in CLAIM.findall(p.read_text())}:
+        text_p = p.read_text()
+        for n in {int(x) for x in CLAIM.findall(text_p)}:
             if n != claimed:
                 failures.append(f"{p} says {n} CONDITIONAL sections, the rulebook says {claimed}")
+        # A matching numeral is not a matching list. Where the file spells the
+        # sections out inline, count the names too.
+        m2 = re.search(r"\*\*\d+ CONDITIONAL sections\*\*[^:]*:\s*([^\n]+)", text_p)
+        if m2:
+            named = [s.strip() for s in m2.group(1).rstrip(".").split(",") if s.strip()]
+            if len(named) != claimed:
+                failures.append(
+                    f"{p} claims {claimed} CONDITIONAL sections and then names {len(named)}"
+                )
 
 
 for md in tracked_markdown():
