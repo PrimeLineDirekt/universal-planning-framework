@@ -52,8 +52,25 @@ jobs:
             echo "a .DS_Store file is tracked"; exit 1
           fi
 
-      # 33 assertions covering symlinks, dangling symlinks, symlinked parent
-      # directories, hard links, glob and newline characters in paths, a
-      # partially populated target, a non-interactive run and a failed write.
+      # Covers symlinks, dangling symlinks, symlinked parent directories, hard
+      # links, glob and newline characters in paths, a partially populated
+      # target, a non-interactive run, a failed write, permission preservation
+      # and both flavours of stat. The suite prints its own assertion count, so
+      # no number is repeated here to go stale.
       - name: install-safety suite
         run: bash tests/install-safety.sh "$PWD" /tmp/upf-install-safety
+
+      # The plugin route reaches the rulebook only through these two paths. A
+      # rename would break it silently, since the plugin still installs cleanly.
+      - name: skill loaders point at files that exist
+        run: |
+          fail=0
+          for f in skills/*/SKILL.md; do
+            grep -o '\${CLAUDE_PLUGIN_ROOT}/[^`]*\.md' "$f" | while read -r p; do
+              rel=${p#\$\{CLAUDE_PLUGIN_ROOT\}/}
+              if [ ! -f "$rel" ]; then echo "$f points at missing $rel"; exit 1; fi
+              echo "$f -> $rel  OK"
+            done || fail=1
+          done
+          test "$fail" -eq 0
+          test "$(grep -lc 'CLAUDE_PLUGIN_ROOT' skills/*/SKILL.md | wc -l)" -eq 2

@@ -138,6 +138,17 @@ TS=$(date +%Y%m%d-%H%M%S)
 NL='
 '
 
+# An interrupt mid-copy must not leave a hidden temp file in someone's project.
+CURRENT_TMP=""
+cleanup_tmp() {
+  if [ -n "$CURRENT_TMP" ] && [ -f "$CURRENT_TMP" ]; then
+    rm -f -- "$CURRENT_TMP"
+  fi
+}
+trap 'cleanup_tmp' EXIT
+trap 'cleanup_tmp; trap - INT; kill -INT $$' INT
+trap 'cleanup_tmp; exit 143' TERM
+
 # ------------------------------------------------------------------ collect --
 
 # .DS_Store and editor swap files turn up in a working copy whatever .gitignore
@@ -185,9 +196,13 @@ write_via_temp() {
   local src=$1 dst=$2 mode=${3:-644} dir tmp
   dir=$(dirname -- "$dst")
   tmp=$(mktemp -- "$dir/.upf-tmp-XXXXXX") || return 1
-  if ! cat -- "$src" > "$tmp"; then rm -f -- "$tmp"; return 1; fi
+  # Ctrl-C during the copy would otherwise leave a hidden .upf-tmp-* file in
+  # the user's project, silently and unmentioned in the summary.
+  CURRENT_TMP=$tmp
+  if ! cat -- "$src" > "$tmp"; then rm -f -- "$tmp"; CURRENT_TMP=""; return 1; fi
   chmod "$mode" -- "$tmp" 2>/dev/null || true
-  mv -f -- "$tmp" "$dst" || { rm -f -- "$tmp"; return 1; }
+  if ! mv -f -- "$tmp" "$dst"; then rm -f -- "$tmp"; CURRENT_TMP=""; return 1; fi
+  CURRENT_TMP=""
 }
 
 # The destination's current permission bits, or empty if they cannot be read.

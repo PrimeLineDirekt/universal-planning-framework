@@ -325,5 +325,11 @@ PATH="$STUB:$PATH" "$REPO/setup.sh" "$T" --overwrite >"$LAB/c26.log" 2>&1
 chk "26 mode preserved under a GNU-shaped stat" \
   "$(mode_bits "$T/.claude/rules/universal-planning.md")" "640"
 
+# --------------------------------------------------------------- case 27 ----
+# Sweep every target this harness built: no run of any kind, successful or
+# failed, may leave a .upf-tmp-* file behind in someone's project.
+leftovers=$(find "$LAB" -name '.upf-tmp-*' 2>/dev/null | wc -l | tr -d ' ')
+chk "27 no temp file left behind by any case" "$leftovers" "0"
+
 printf '\n%s passed, %s failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
