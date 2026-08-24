@@ -211,8 +211,6 @@ Automatically include relevant CONDITIONAL sections based on domain (8 domains):
 - Completion Gate: agent configs registered, prompts versioned, model settings documented, tool registrations complete
 - Review Checkpoints: every 2 phases. Scope-based phases.
 
-> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
-
 **Business / Strategy:**
 - Timeline, Budget & Resources, Communication, User Validation
 - Completion Gate: stakeholder notifications sent, process docs updated, handoff complete, SOPs revised
@@ -244,6 +242,8 @@ Automatically include relevant CONDITIONAL sections based on domain (8 domains):
 - Union of all relevant sections from matched domains
 - Completion Gate: union of all relevant domain checks verified
 - Review Checkpoints: use the most conservative interval from matched domains
+
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
 
 ---
 
