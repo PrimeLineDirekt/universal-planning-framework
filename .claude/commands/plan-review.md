@@ -182,7 +182,7 @@ Every plan carries a **Default Vehicle** (from Stage 0.5; the rubric is at `.cla
 
 ## Report Format
 
-```markdown
+````markdown
 # Plan Review Report
 
 **Plan:** [filename] | **Domain:** [detected] | **Grade:** [C/B/A] | **Confidence:** [H/M/L]
@@ -241,7 +241,7 @@ Based on [domain] domain:
 ## Bottom Line
 
 [1-2 sentences: grade, what's strong, what must be fixed, recommendation]
-```
+````
 
 ---
 

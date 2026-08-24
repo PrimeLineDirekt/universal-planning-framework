@@ -57,6 +57,10 @@ jobs:
       # target, a non-interactive run, a failed write, permission preservation
       # and both flavours of stat. The suite prints its own assertion count, so
       # no number is repeated here to go stale.
+      # Every check here exists because a review round found the defect it catches.
+      - name: documentation checks
+        run: python3 tests/doc-checks.py
+
       - name: install-safety suite
         run: bash tests/install-safety.sh "$PWD" /tmp/upf-install-safety
 

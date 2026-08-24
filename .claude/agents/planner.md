@@ -142,7 +142,7 @@ If Stage 0 exists: every finding addressed or dismissed in plan? (anti-pattern #
 
 ## Report Format
 
-```markdown
+````markdown
 # Plan Review Report
 
 **Plan:** [filename] | **Domain:** [detected] | **Grade:** [C/B/A] | **Confidence:** [H/M/L]
@@ -201,7 +201,7 @@ Based on [domain] domain:
 ## Bottom Line
 
 [1-2 sentences: grade, what's strong, what must be fixed, recommendation]
-```
+````
 
 ---
 

@@ -249,7 +249,7 @@ Include at the top: Quality Grade (C/B/A), Confidence Level (High/Medium/Low), d
 
 Present a structured summary to the user:
 
-```markdown
+````markdown
 ## Plan Summary: {title}
 
 **What will be built/changed:**
@@ -267,7 +267,7 @@ Present a structured summary to the user:
 
 **Effort**: {estimated} | **Files**: {count new/changed} | **LOC**: {estimated}
 **Confidence**: {High/Medium/Low} | **Grade**: {A/B/C}
-```
+````
 
 Then ask: "Plan complete. Should I start implementing?"
 
