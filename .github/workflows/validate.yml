@@ -21,12 +21,30 @@ jobs:
           python3 -m json.tool .claude-plugin/plugin.json > /dev/null
           python3 -m json.tool .claude-plugin/marketplace.json > /dev/null
 
-      # The plugin loader only reads agents from the default `agents/` directory
-      # at the plugin root; a path in plugin.json validates but loads nothing,
-      # and a symlink does not survive the plugin cache copy. So the file exists
-      # twice on purpose, and this step is what keeps the two in step.
+      # planner.md exists at two paths on purpose. Measured on Claude Code
+      # 2.1.241 by installing the plugin and reading `claude plugin details`,
+      # not by reading the manifest docs:
+      #
+      #   "agents": ["./.claude/agents/planner.md"]  validate PASS  Agents (0)
+      #   "agents": ["./.claude/agents/"]            validate FAIL
+      #   agents/planner.md at the plugin root       validate PASS  Agents (1)
+      #   agents/planner.md as a symlink             validate PASS  Agents (0)
+      #
+      # `commands` does NOT behave this way: "./.claude/commands/" loaded all
+      # four. So the two fields differ in practice whatever the docs say, and
+      # this step is what keeps the two copies from drifting.
       - name: planner agent copies agree
         run: diff -u .claude/agents/planner.md agents/planner.md
+
+      - name: manifest, marketplace and changelog agree on the version
+        run: |
+          PV=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          MV=$(python3 -c "import json;print(json.load(open('.claude-plugin/marketplace.json'))['plugins'][0]['version'])")
+          CV=$(grep -m1 -oE '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | tr -d '#[] ')
+          echo "plugin=$PV marketplace=$MV changelog=$CV"
+          test "$PV" = "$MV"
+          test "$PV" = "$CV"
+          grep -q "version-$PV-green" README.md
 
       - name: no .DS_Store is tracked
         run: |

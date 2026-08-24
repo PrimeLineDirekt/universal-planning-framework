@@ -1,7 +1,7 @@
 # Universal Planning Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)]()
 [![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-orange.svg)]()
 
 
@@ -19,7 +19,10 @@
 /plugin marketplace add primeline-ai/universal-planning-framework
 /plugin install universal-planning-framework@primeline-upf
 ```
-Run both inside Claude Code. Skills arrive namespaced: `/universal-planning-framework:plan-new`.
+Run both inside Claude Code. You get the four commands namespaced, so
+`/plan-new` becomes `/universal-planning-framework:plan-new`, plus the `planner`
+agent and two skills Claude reaches for on its own, `universal-planning` and
+`vehicle-selection`, which carry the rulebook and the vehicle rubric.
 Update later with `/plugin marketplace update primeline-upf`.
 
 **Into your project's `.claude/`** (plain files you can read and edit):

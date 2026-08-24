@@ -61,8 +61,18 @@ TARGET=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --dry-run)       DRY_RUN=1 ;;
-    --skip-existing) MODE=skip ;;
-    --overwrite)     MODE=overwrite ;;
+    # These two mean opposite things. Last-wins would hand someone who scripted
+    # the flags in the wrong order the opposite of the safe behaviour, silently.
+    --skip-existing)
+      if [ "$MODE" = overwrite ]; then
+        die "--skip-existing and --overwrite contradict each other. Pass one."
+      fi
+      MODE=skip ;;
+    --overwrite)
+      if [ "$MODE" = skip ]; then
+        die "--skip-existing and --overwrite contradict each other. Pass one."
+      fi
+      MODE=overwrite ;;
     -h|--help)       usage; exit 0 ;;
     --)              shift; break ;;
     -*)              die "unknown option: $1 (try --help)" ;;
@@ -130,8 +140,13 @@ NL='
 
 # ------------------------------------------------------------------ collect --
 
+# .DS_Store and editor swap files turn up in a working copy whatever .gitignore
+# says, and installing this repo's junk into someone else's project is rude.
 FILES=()
 while IFS= read -r -d '' f; do
+  case $(basename -- "$f") in
+    .DS_Store|Thumbs.db|*.swp|*.swo|*~|.#*) continue ;;
+  esac
   FILES+=("$f")
 done < <(find "$SRC" -type f -print0 | LC_ALL=C sort -z)
 
@@ -162,13 +177,22 @@ has_symlinked_parent() {
 # Write src to a fresh temporary file next to dst, then move it into place.
 # The move replaces the directory entry, so a hard link elsewhere keeps its
 # own content, and a failed copy never leaves dst truncated.
+#
+# The mode argument decides what the result is chmod'ed to. Replacing a file the
+# user already had must carry THEIR mode across: a file they had at 0600 must
+# not come back world-readable just because it was replaced.
 write_via_temp() {
-  local src=$1 dst=$2 dir tmp
+  local src=$1 dst=$2 mode=${3:-644} dir tmp
   dir=$(dirname -- "$dst")
   tmp=$(mktemp -- "$dir/.upf-tmp-XXXXXX") || return 1
   if ! cat -- "$src" > "$tmp"; then rm -f -- "$tmp"; return 1; fi
-  chmod 644 -- "$tmp" 2>/dev/null || true
+  chmod "$mode" -- "$tmp" 2>/dev/null || true
   mv -f -- "$tmp" "$dst" || { rm -f -- "$tmp"; return 1; }
+}
+
+# The destination's current permission bits, or empty if they cannot be read.
+mode_of() {
+  stat -f '%Lp' -- "$1" 2>/dev/null || stat -c '%a' -- "$1" 2>/dev/null || true
 }
 
 # Create dst only if nothing is there. noclobber reserves the name, then the
@@ -271,7 +295,7 @@ for src in "${FILES[@]}"; do
           blocked=$((blocked + 1))
           continue
         fi
-        if ! write_via_temp "$src" "$dst"; then
+        if ! write_via_temp "$src" "$dst" "$(mode_of "$dst")"; then
           printf '  blocked  %s (write failed, your file is untouched)\n' "$rel"
           blocked=$((blocked + 1))
           continue

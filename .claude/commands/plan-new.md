@@ -75,7 +75,7 @@ For each check you run:
 
 ## Stage 0.5: Vehicle Selection (silent auto-inference - runs on EVERY plan)
 
-After Discovery, before drafting phases, run the **execution-vehicle rubric** (`.claude/rules/vehicle-selection.md`) for every phase the plan will have. This is **ALWAYS silent auto-inference** - NEVER ask the user which vehicle to use, on any plan, trivial or not (an interactive vehicle prompt is a kill criterion).
+After Discovery, before drafting phases, run the **execution-vehicle rubric** for every phase the plan will have. The rubric is at `.claude/rules/vehicle-selection.md` when the framework was installed into the project, and in the `vehicle-selection` skill when it was installed as a plugin. Use whichever is present. This is **ALWAYS silent auto-inference** - NEVER ask the user which vehicle to use, on any plan, trivial or not (an interactive vehicle prompt is a kill criterion).
 
 For each phase the rubric emits: (a) a **VEHICLE** (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) from raw signals (complexity, independent-stream count, decomposition shape, reversibility), with an optional adaptive delegation score as a BOUNDED tiebreaker (single-agent<->sub-agent boundary only); (b) for multi-agent vehicles, the **model tier per stage** (strongest model for orchestration/synthesis only, mid-tier for delegated work, fast/local model for simple or bulk steps).
 
@@ -291,7 +291,7 @@ These rules apply when the plan is being executed. They are also persistently st
 - Parallel independent tasks → parallel agents
 - Code review → dedicated review agent
 - Exploration/Research → Explore Agent (haiku)
-- Delegation Score >= 3 → auto-delegate (see `.claude/rules/delegation.md`)
+- Delegation Score >= 3 → auto-delegate (if your project defines its own delegation rule, follow that; this framework does not ship one)
 
 ### Plan Completion (when ALL phases are done)
 

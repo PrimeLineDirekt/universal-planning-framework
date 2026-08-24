@@ -4,19 +4,45 @@ set -uo pipefail
 
 REPO=$1
 LAB=$2
-rm -rf "$LAB"; mkdir -p "$LAB"
+
+# $LAB is deleted recursively below. set -u catches an unset argument but not a
+# dangerous value, and a typo here costs a home directory.
+case $LAB in
+  ""|"/"|"/*") echo "refusing to use '$LAB' as the scratch directory" >&2; exit 2 ;;
+esac
+if [ "$LAB" = "$HOME" ] || [ "$LAB" = "$REPO" ] || [ "$LAB" = "." ] || [ "$LAB" = ".." ]; then
+  echo "refusing to use '$LAB' as the scratch directory" >&2; exit 2
+fi
+case $LAB in
+  */*) : ;;
+  *) echo "scratch directory must be a path with a separator, got '$LAB'" >&2; exit 2 ;;
+esac
+if [ -e "$LAB" ] && [ ! -f "$LAB/.upf-scratch" ]; then
+  echo "'$LAB' exists and was not created by this harness. Pick an unused path." >&2
+  exit 2
+fi
+
+rm -rf "$LAB"; mkdir -p "$LAB"; : > "$LAB/.upf-scratch"
 
 pass=0; fail=0
 ok()   { printf 'PASS  %s\n' "$1"; pass=$((pass+1)); }
 bad()  { printf 'FAIL  %s\n' "$1"; fail=$((fail+1)); }
 chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; fi; }
+mode_bits() { stat -f '%Lp' -- "$1" 2>/dev/null || stat -c '%a' -- "$1" 2>/dev/null || echo "?"; }
 
 # ---------------------------------------------------------------- case 1 ----
 # Clean target: everything installs.
 T="$LAB/clean"; mkdir -p "$T"
 "$REPO/setup.sh" "$T" --skip-existing >"$LAB/c1.log" 2>&1
 n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
-chk "1 clean target installs all 7 files" "$n" "7"
+chk "1a clean target installs all 7 files" "$n" "7"
+# Counting files says nothing about their CONTENT. Without this, an installer
+# that truncated every copy would pass the whole suite.
+if diff -r -x '.DS_Store' "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
+  ok "1b installed tree is byte-identical to the source"
+else
+  bad "1b installed tree differs from the source (see $LAB/c1.diff)"
+fi
 
 # ---------------------------------------------------------------- case 2 ----
 # Partially populated target with a same-named file: must NOT be touched.
@@ -81,11 +107,18 @@ chk "8 dry-run created no .claude" "$([ -e "$T/.claude" ] && echo yes || echo no
 # --overwrite backs up before replacing.
 T="$LAB/over"; mkdir -p "$T/.claude/rules"
 printf 'OLD RULE BODY\n' > "$T/.claude/rules/universal-planning.md"
+chmod 600 "$T/.claude/rules/universal-planning.md"
 "$REPO/setup.sh" "$T" --overwrite >"$LAB/c9.log" 2>&1
 bk=$(find "$T/.claude/rules" -name 'universal-planning.md.upf-backup-*' | head -1)
 chk "9a backup exists"        "$([ -n "$bk" ] && echo yes || echo no)" "yes"
 chk "9b backup holds the old" "$(cat "$bk" 2>/dev/null)" "OLD RULE BODY"
-chk "9c new content in place" "$(head -c 4 "$T/.claude/rules/universal-planning.md")" "$(head -c 4 "$REPO/.claude/rules/universal-planning.md")"
+if cmp -s "$T/.claude/rules/universal-planning.md" "$REPO/.claude/rules/universal-planning.md"; then
+  ok "9c replacement is byte-identical to the source"
+else
+  bad "9c replacement differs from the source"
+fi
+# The user's mode must survive being replaced. 0600 must not come back 0644.
+chk "9d replacement kept the user's permission bits" "$(mode_bits "$T/.claude/rules/universal-planning.md")" "600"
 
 # --------------------------------------------------------------- case 10 ----
 # Non-TTY default (no flag at all) must not overwrite.
@@ -175,9 +208,16 @@ NL='
 '
 NLDIR="$LAB/proj$NL"
 mkdir -p "$LAB/proj/.claude/rules" "$NLDIR"
-# Guard the guard: if the newline directory did not get created, this case
-# proves nothing and must not report a pass.
-[ -d "$NLDIR" ] && [ "$NLDIR" != "$LAB/proj" ] || bad "20-setup could not create a newline-named directory"
+# Guard the guard. Comparing the two SHELL STRINGS is tautological: they always
+# differ by the literal newline. What has to be true is that they are two
+# different directories ON DISK, which -ef answers with device plus inode. On a
+# filesystem that normalises away the trailing newline they would be the same
+# directory and this case would prove nothing.
+if [ -d "$NLDIR" ] && [ ! "$NLDIR" -ef "$LAB/proj" ]; then
+  ok "20-setup created a genuinely distinct newline-named directory"
+else
+  bad "20-setup could not create a distinct newline-named directory"
+fi
 printf 'WRONG PROJECT FILE\n' > "$LAB/proj/.claude/rules/universal-planning.md"
 "$REPO/setup.sh" "$NLDIR" --overwrite >"$LAB/c20.log" 2>&1
 chk "20 newline-named target did not touch the neighbour" \
@@ -222,6 +262,29 @@ chk "23a no zero-byte stub left behind" \
   "$([ -e "$T/.claude/rules/universal-planning.md" ] && echo yes || echo no)" "no"
 chk "23b the readable siblings still installed" \
   "$([ -s "$T/.claude/rules/vehicle-selection.md" ] && echo yes || echo no)" "yes"
+
+# --------------------------------------------------------------- case 24 ----
+# Contradictory flags must be refused, in either order, rather than last-wins.
+T="$LAB/flags"; mkdir -p "$T/.claude/rules"
+printf 'KEEP\n' > "$T/.claude/rules/universal-planning.md"
+"$REPO/setup.sh" "$T" --overwrite --skip-existing >"$LAB/c24a.log" 2>&1
+chk "24a --overwrite then --skip-existing refused" "$?" "1"
+"$REPO/setup.sh" "$T" --skip-existing --overwrite >"$LAB/c24b.log" 2>&1
+chk "24b --skip-existing then --overwrite refused" "$?" "1"
+chk "24c user file untouched by either" "$(cat "$T/.claude/rules/universal-planning.md")" "KEEP"
+
+# --------------------------------------------------------------- case 25 ----
+# Junk that lives in a working copy must not be installed into someone's project.
+J="$LAB/junkrepo"; mkdir -p "$J"
+cp -R "$REPO/.claude" "$J/.claude"
+cp "$REPO/setup.sh" "$J/setup.sh"; chmod +x "$J/setup.sh"
+printf 'macos junk\n' > "$J/.claude/.DS_Store"
+printf 'macos junk\n' > "$J/.claude/rules/.DS_Store"
+T="$LAB/junktarget"; mkdir -p "$T"
+"$J/setup.sh" "$T" --skip-existing >"$LAB/c25.log" 2>&1
+n=$(find "$T" -name '.DS_Store' | wc -l | tr -d ' ')
+chk "25a no .DS_Store was installed" "$n" "0"
+chk "25b the real files still installed" "$([ -s "$T/.claude/rules/universal-planning.md" ] && echo yes || echo no)" "yes"
 
 printf '\n%s passed, %s failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
