@@ -66,7 +66,7 @@ Runs BEFORE writing a single line of the plan. Not a rigid checklist - a thinkin
 **5 CORE Sections (always required):**
 
 1. **Context & Why** - Why this exists, what problem it solves. Max 3 sentences. NOT "improve X" but WHY improve X.
-   - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details — pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
+   - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details, pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
 2. **Success Criteria** - Measurable outcomes, not activities. Includes NOT-scope and FAILED conditions (kill criteria + timeout). Red flag: if you can't write a FAILED condition, criteria are too vague.
    - **Quality bar for FAILED conditions** *(holdout-verified 2026-05-13)*: each FAILED condition must have a MEASURABLE threshold AND a TIMEOUT. Bad: "if it doesn't work, abort". Good: "if test pass rate < 80% after 3 days, abort". Vague conditions without measurable threshold or timeout do NOT count.
    - **Acceptance Criteria (GWT)** *(optional)*: Given/When/Then format for testable behavior specs. Complements FAILED conditions: FAILED covers what must NOT happen, GWT covers what MUST happen. Example: *"Given a new user, When they click 'Sign in with Google' and authorize, Then they are redirected to the dashboard with a valid session."* Use when behavior has multiple paths or edge cases worth specifying upfront.
@@ -150,7 +150,7 @@ Stress-test the plan from 6 adversarial perspectives without human input. Purpos
 
 After creating the plan, run:
 
-1. **Execution Vehicle Validation** - confirm the Stage 0.5 vehicle + per-stage model routing fit each phase's scope; multi-agent vehicles have interface contracts + a routing plan.
+1. **Execution Vehicle Validation** - confirm the Stage 0.5 vehicle + per-stage model tier fit each phase's scope, and that multi-agent vehicles have interface contracts and a routing plan. Do NOT re-infer vehicles here; Stage 0.5 already decided, this validates.
 2. **Research Needs** - Which phases need web research during execution? Mark them now.
 3. **Review Gates** - After which phases stop and validate? Confirm gates are in place.
 4. **Anti-Pattern Check** - Quick scan against 21 anti-patterns below. Fix any found.
@@ -333,7 +333,7 @@ STAGE 1 (Plan):
   CORE:  Context [+Behavior] | Success (FAILED [+GWT]) | Assumptions (IMPACT) |
          Phases (Gates + Review) | Verification (Auto + Manual + Observability)
   COND:  Rollback | Risk | Post-Completion | Budget | User Validation | Legal |
-         Security | Resume | Incremental | Delegation | Dependencies |
+         Security | Resume | Incremental | Execution Vehicle | Dependencies |
          Related Work | Timeline | Stakeholders | Reference Library | Learning |
          Feedback | Completion Gate
   Phases: Scope-based (coding) or time-based (non-coding). Review checkpoint every 2 phases.
@@ -346,7 +346,7 @@ STAGE 1.5 (Hardening, Optional):
   Output: Hardened plan + Hardening Log
 
 STAGE 2 (Meta) - 7 Checks:
-  M.1 Delegation | M.2 Research | M.3 Review Gates | M.4 Anti-Patterns (21)
+  M.1 Vehicle Validation | M.2 Research | M.3 Review Gates | M.4 Anti-Patterns (21)
   M.5 Cold Start Test | M.6 Plan Hygiene | M.7 Discovery Consolidation
 
 REPLAN (6 steps): Triage | Scope damage | Update in place | Recheck | Re-confirm confidence | Resume

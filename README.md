@@ -55,7 +55,7 @@ curl -o .claude/rules/universal-planning.md \
 
 **Execution vehicle selection.** A plan decides not just *what* to do but *how each phase runs* - the optimal execution vehicle (single agent, parallel sub-agents, an agent team, a background session, a dynamic multi-agent workflow, or a goal-loop) plus the model tier per stage. It is inferred silently as a planning output, never via a prompt - so trivial plans stay frictionless while complex ones get the orchestration they need. `/plan-review` then flags an under-specified vehicle or a stage routed to a needlessly expensive model. [See below.](#execution-vehicle-selection)
 
-**Execution discipline (not just planning).** Plans are executed, not dumbly worked through. A code review runs after every phase; each phase is **empirically verified** - you run or trigger what it built and confirm it actually works, not "code written"; and before a plan is declared done the framework re-checks that every gate truly passed and **discloses anything deferred** (what + why) as a follow-up task - never silently dropped. (Stage 5 execution rules in `.claude/commands/plan-new.md`.)
+**Execution discipline (not just planning).** Plans are executed, not dumbly worked through. A code review runs after every phase; each phase is **empirically verified** - you run or trigger what it built and confirm it actually works, not "code written"; and before a plan is declared done the framework re-checks that every gate truly passed and **discloses anything deferred** (what + why) as a follow-up task - never silently dropped. A Grade B or A plan can ship with a [verify report](.claude/templates/verify-report-template.md) beside it: a sibling file that proves each gate on three legs - what triggered the work, what effect it had on real state, and whether the downstream consumer can use the result. (Stage 5 execution rules in `.claude/commands/plan-new.md`.)
 
 **Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
 
@@ -66,6 +66,8 @@ curl -o .claude/rules/universal-planning.md \
 **8 domain detection.** Software, AI/Agent, Business, Content, Infrastructure, Data & Analytics, Research, Multi-Domain. Each domain auto-includes relevant sections.
 
 ## 5-Minute Quick Start
+
+If you installed the plugin, every command below is namespaced: `/plan-new` becomes `/universal-planning-framework:plan-new`. If you installed into your project's `.claude/`, use the short form as written.
 
 ### 1. Create a plan
 ```bash
@@ -144,7 +146,7 @@ This works standalone - even without the full framework. Use it before any decis
 
 **Optional structured formats**: Behavior Description captures what a feature DOES in tech-agnostic language (3-5 sentences). Given/When/Then acceptance criteria complement FAILED conditions - FAILED covers what must NOT happen, GWT covers what MUST happen.
 
-**18 CONDITIONAL sections** (domain-detected): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Delegation, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Completion Gate.
+**18 CONDITIONAL sections** (domain-detected): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Execution Vehicle & Orchestration, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Completion Gate.
 
 **Coding domains** size phases by scope (files, features, tests), not hours. Non-coding domains use time estimates as rough guides.
 
@@ -244,7 +246,7 @@ Found a gap the framework doesn't catch? [Open an issue](https://github.com/prim
 
 ## The Ecosystem
 
-UPF is one piece of a progression. Each tier works independently - no hard dependencies.
+UPF is one piece of a progression. Each tier works on its own, with no hard dependencies between them.
 
 ```
 You're here          You want this            Install this
@@ -253,35 +255,23 @@ Raw Claude Code  ->  Session memory       ->  Starter System (free)
                  ->  Workflow skills      ->  + Skills Bundle (free)
                  ->  Deep planning        ->  + UPF (free) <- you are here
                  ->  Deep analysis        ->  + Quantum Lens (free)
-                 ->  AI-powered system    ->  + Course (paid)
+                 ->  A self-improving setup -> + Evolving Lite (free)
+                 ->  Memory + knowledge graphs -> + Course (paid)
 ```
 
-| Component | What It Does | Link |
-|-----------|-------------|------|
-| **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) |
-| **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) |
-| **UPF** | Universal Planning Framework with deep multi-stage planning | You're reading it |
-| **Quantum Lens** | Multi-perspective analysis + solution engineering (7 cognitive lenses) | [GitHub](https://github.com/primeline-ai/quantum-lens) |
-| **Course** | Kairn + Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
+| Component | What it does | |
+|-----------|--------------|---|
+| **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) · [Blog](https://primeline.cc/blog/session-management) |
+| **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) · [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
+| **UPF** | This repo. Discovery-first planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
+| **Quantum Lens** | Multi-perspective analysis and solution engineering, 7 cognitive lenses | [GitHub](https://github.com/primeline-ai/quantum-lens) · [Blog](https://primeline.cc/blog/quantum-lens-multi-agent-analysis) |
+| **Evolving Lite** | Self-improving Claude Code plugin: memory, delegation, self-correction | [GitHub](https://github.com/primeline-ai/evolving-lite) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
+| **Kairn** | Persistent knowledge graph with context routing | [GitHub](https://github.com/primeline-ai/kairn) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
+| **tmux Orchestration** | Parallel Claude Code sessions with heartbeat monitoring | [GitHub](https://github.com/primeline-ai/claude-tmux-orchestration) · [Blog](https://primeline.cc/blog/tmux-orchestration) |
+| **Course** | Kairn and Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
 
-The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version - use it when the stakes are high enough to justify Stage 0 discovery.
+The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version, for when the stakes justify Stage 0 discovery.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file.
-
----
-
-## Part of the PrimeLine Ecosystem
-
-| Tool | What It Does | Deep Dive |
-|------|-------------|-----------|
-| [**Evolving Lite**](https://github.com/primeline-ai/evolving-lite) | Self-improving Claude Code plugin - memory, delegation, self-correction | [Blog](https://primeline.cc/blog/knowledge-architecture) |
-| [**Kairn**](https://github.com/primeline-ai/kairn) | Persistent knowledge graph with context routing for AI | [Blog](https://primeline.cc/blog/knowledge-architecture) |
-| [**tmux Orchestration**](https://github.com/primeline-ai/claude-tmux-orchestration) | Parallel Claude Code sessions with heartbeat monitoring | [Blog](https://primeline.cc/blog/tmux-orchestration) |
-| [**UPF**](https://github.com/primeline-ai/universal-planning-framework) | 3-stage planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
-| [**Quantum Lens**](https://github.com/primeline-ai/quantum-lens) | 7 cognitive lenses for multi-perspective analysis | [Blog](https://primeline.cc/blog/quantum-lens-multi-agent-analysis) |
-| [**PrimeLine Skills**](https://github.com/primeline-ai/primeline-skills) | 5 production-grade workflow skills for Claude Code | [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
-| [**Starter System**](https://github.com/primeline-ai/claude-code-starter-system) | Lightweight session memory and handoffs | [Blog](https://primeline.cc/blog/session-management) |
-
-**[@PrimeLineAI](https://x.com/PrimeLineAI)** · [primeline.cc](https://primeline.cc) · [Free Guide](https://primeline.cc/guide)
+MIT. See [LICENSE](LICENSE).

@@ -28,6 +28,12 @@ pass=0; fail=0
 ok()   { printf 'PASS  %s\n' "$1"; pass=$((pass+1)); }
 bad()  { printf 'FAIL  %s\n' "$1"; fail=$((fail+1)); }
 chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; fi; }
+
+# How many files setup.sh should install, taken from the source rather than
+# hardcoded, so adding a file to .claude/ does not silently stale this suite.
+# Safe as a count ONLY because case 1b diffs the installed tree against the
+# source independently; a count alone would pass on the wrong files.
+PAYLOAD=$(find "$REPO/.claude" -type f ! -name '.DS_Store' | wc -l | tr -d ' ')
 # Same trap as setup.sh's mode_of: `-f` is "format" on BSD stat and "filesystem
 # status" on GNU stat, so the BSD form succeeds on Linux with the wrong answer.
 # Validate that the result is octal rather than trusting the exit status.
@@ -44,7 +50,7 @@ mode_bits() {
 T="$LAB/clean"; mkdir -p "$T"
 "$REPO/setup.sh" "$T" --skip-existing >"$LAB/c1.log" 2>&1
 n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
-chk "1a clean target installs all 7 files" "$n" "7"
+chk "1a clean target installs the whole payload" "$n" "$PAYLOAD"
 # Counting files says nothing about their CONTENT. Without this, an installer
 # that truncated every copy would pass the whole suite.
 if diff -r -x '.DS_Store' "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
@@ -143,7 +149,7 @@ chk "10 non-TTY default kept user file" "$(cat "$T/.claude/rules/universal-plann
 T="$LAB/my project dir"; mkdir -p "$T"
 "$REPO/setup.sh" "$T" --skip-existing >"$LAB/c11.log" 2>&1
 n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
-chk "11 target path with a space works" "$n" "7"
+chk "11 target path with a space works" "$n" "$PAYLOAD"
 
 # --------------------------------------------------------------- case 12 ----
 # .claude itself is a symlink.

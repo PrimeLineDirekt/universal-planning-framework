@@ -63,8 +63,8 @@ Determine which domain(s) apply:
 
 Based on detected domain, verify relevant sections are present:
 
-**Software Development:** Dependencies, Risk, Rollback, Post-Completion, Delegation, Reference Library
-**Multi-Agent / AI:** Dependencies, Risk, Delegation, Security, Post-Completion, Reference Library
+**Software Development:** Dependencies, Risk, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
+**Multi-Agent / AI:** Dependencies, Risk, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 **Business / Strategy:** Timeline, Budget, Stakeholders, User Validation
 **Content / Marketing:** Timeline, User Validation, Legal, Feedback Architecture
 **Infrastructure / DevOps:** Dependencies, Risk, Rollback, Post-Completion, Resume Protocol, Reference Library
