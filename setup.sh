@@ -191,8 +191,17 @@ write_via_temp() {
 }
 
 # The destination's current permission bits, or empty if they cannot be read.
+#
+# Trying one flavour of stat and falling back on failure is NOT enough here.
+# `-f` is "format" on BSD stat and "filesystem status" on GNU stat, so the BSD
+# form SUCCEEDS on Linux and returns a block of filesystem information. Only
+# checking that the answer is octal digits tells the two apart.
 mode_of() {
-  stat -f '%Lp' -- "$1" 2>/dev/null || stat -c '%a' -- "$1" 2>/dev/null || true
+  local m
+  m=$(stat -c '%a' -- "$1" 2>/dev/null) || m=""
+  case $m in ''|*[!0-7]*) m=$(stat -f '%Lp' -- "$1" 2>/dev/null) || m="" ;; esac
+  case $m in ''|*[!0-7]*) m="" ;; esac
+  printf '%s' "$m"
 }
 
 # Create dst only if nothing is there. noclobber reserves the name, then the

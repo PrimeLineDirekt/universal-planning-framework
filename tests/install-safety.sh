@@ -28,7 +28,16 @@ pass=0; fail=0
 ok()   { printf 'PASS  %s\n' "$1"; pass=$((pass+1)); }
 bad()  { printf 'FAIL  %s\n' "$1"; fail=$((fail+1)); }
 chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; fi; }
-mode_bits() { stat -f '%Lp' -- "$1" 2>/dev/null || stat -c '%a' -- "$1" 2>/dev/null || echo "?"; }
+# Same trap as setup.sh's mode_of: `-f` is "format" on BSD stat and "filesystem
+# status" on GNU stat, so the BSD form succeeds on Linux with the wrong answer.
+# Validate that the result is octal rather than trusting the exit status.
+mode_bits() {
+  local m
+  m=$(stat -c '%a' -- "$1" 2>/dev/null) || m=""
+  case $m in ''|*[!0-7]*) m=$(stat -f '%Lp' -- "$1" 2>/dev/null) || m="" ;; esac
+  case $m in ''|*[!0-7]*) m="?" ;; esac
+  printf '%s' "$m"
+}
 
 # ---------------------------------------------------------------- case 1 ----
 # Clean target: everything installs.
@@ -107,7 +116,7 @@ chk "8 dry-run created no .claude" "$([ -e "$T/.claude" ] && echo yes || echo no
 # --overwrite backs up before replacing.
 T="$LAB/over"; mkdir -p "$T/.claude/rules"
 printf 'OLD RULE BODY\n' > "$T/.claude/rules/universal-planning.md"
-chmod 600 "$T/.claude/rules/universal-planning.md"
+chmod 640 "$T/.claude/rules/universal-planning.md"
 "$REPO/setup.sh" "$T" --overwrite >"$LAB/c9.log" 2>&1
 bk=$(find "$T/.claude/rules" -name 'universal-planning.md.upf-backup-*' | head -1)
 chk "9a backup exists"        "$([ -n "$bk" ] && echo yes || echo no)" "yes"
@@ -117,8 +126,10 @@ if cmp -s "$T/.claude/rules/universal-planning.md" "$REPO/.claude/rules/universa
 else
   bad "9c replacement differs from the source"
 fi
-# The user's mode must survive being replaced. 0600 must not come back 0644.
-chk "9d replacement kept the user's permission bits" "$(mode_bits "$T/.claude/rules/universal-planning.md")" "600"
+# The user's mode must survive being replaced. 0640 is neither mktemp's
+# default (0600) nor the mode a NEW file gets (0644), so a chmod that silently
+# failed cannot look like one that worked.
+chk "9d replacement kept the user's permission bits" "$(mode_bits "$T/.claude/rules/universal-planning.md")" "640"
 
 # --------------------------------------------------------------- case 10 ----
 # Non-TTY default (no flag at all) must not overwrite.
@@ -285,6 +296,34 @@ T="$LAB/junktarget"; mkdir -p "$T"
 n=$(find "$T" -name '.DS_Store' | wc -l | tr -d ' ')
 chk "25a no .DS_Store was installed" "$n" "0"
 chk "25b the real files still installed" "$([ -s "$T/.claude/rules/universal-planning.md" ] && echo yes || echo no)" "yes"
+
+# --------------------------------------------------------------- case 26 ----
+# Mode preservation must survive BOTH stat flavours. On BSD `stat -f FMT` is a
+# format string; on GNU the same flag reports FILESYSTEM STATUS and SUCCEEDS,
+# so a fallback keyed on the exit status silently reads the wrong thing. A macOS
+# run cannot see that on its own, so this case puts a GNU-shaped stat in front.
+STUB="$LAB/gnustub"; mkdir -p "$STUB"
+cat > "$STUB/stat" <<'STATEOF'
+#!/usr/bin/env bash
+# Minimal GNU-shaped stat: -c is the format flag, -f reports the filesystem.
+case ${1:-} in
+  -c) shift; fmt=$1; shift; [ "${1:-}" = "--" ] && shift
+      # Delegate to whichever real stat this host has, so the stub itself is
+      # portable. Only the -f branch below emulates GNU, which is the point.
+      /usr/bin/stat -c "$fmt" -- "$1" 2>/dev/null \
+        || /usr/bin/stat -f '%Lp' -- "$1" 2>/dev/null ;;
+  -f) shift; [ "${1:-}" = "--" ] && shift
+      printf '  File: "%s"\n    ID: deadbeef Namelen: 255 Type: ext2/ext3\n' "$1" ;;
+  *)  exec /usr/bin/stat "$@" ;;
+esac
+STATEOF
+chmod +x "$STUB/stat"
+T="$LAB/gnumode"; mkdir -p "$T/.claude/rules"
+printf 'OLD BODY\n' > "$T/.claude/rules/universal-planning.md"
+chmod 640 "$T/.claude/rules/universal-planning.md"
+PATH="$STUB:$PATH" "$REPO/setup.sh" "$T" --overwrite >"$LAB/c26.log" 2>&1
+chk "26 mode preserved under a GNU-shaped stat" \
+  "$(mode_bits "$T/.claude/rules/universal-planning.md")" "640"
 
 printf '\n%s passed, %s failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
