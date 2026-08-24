@@ -256,7 +256,6 @@ Raw Claude Code  ->  Session memory          ->  Starter System (free)
                  ->  Deep planning           ->  + UPF (free) <- you are here
                  ->  Deep analysis           ->  + Quantum Lens (free)
                  ->  A self-improving setup  ->  + Evolving Lite (free)
-                 ->  Memory + graphs, taught ->  + Course (paid)
 ```
 
 | Component | What it does | Links |
@@ -268,7 +267,6 @@ Raw Claude Code  ->  Session memory          ->  Starter System (free)
 | **Evolving Lite** | Self-improving Claude Code plugin: memory, delegation, self-correction | [GitHub](https://github.com/primeline-ai/evolving-lite) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
 | **Kairn** | Persistent knowledge graph with context routing | [GitHub](https://github.com/primeline-ai/kairn) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
 | **tmux Orchestration** | Parallel Claude Code sessions with heartbeat monitoring | [GitHub](https://github.com/primeline-ai/claude-tmux-orchestration) · [Blog](https://primeline.cc/blog/tmux-orchestration) |
-| **Course** | Kairn and Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
 
 The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version, for when the stakes justify Stage 0 discovery.
 
