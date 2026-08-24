@@ -176,7 +176,12 @@ write_via_temp() {
 write_new() {
   local src=$1 dst=$2
   ( set -o noclobber; : > "$dst" ) 2>/dev/null || return 1
-  write_via_temp "$src" "$dst" || return 1
+  if ! write_via_temp "$src" "$dst"; then
+    # Give back the name we reserved, but only while it is still the empty
+    # placeholder this function created.
+    if [ -f "$dst" ] && [ ! -s "$dst" ]; then rm -f -- "$dst"; fi
+    return 1
+  fi
 }
 
 installed=0
@@ -299,7 +304,7 @@ for src in "${FILES[@]}"; do
     printf '  install  %s\n' "$rel"
     installed=$((installed + 1))
   else
-    printf '  blocked  %s (appeared while installing, left alone)\n' "$rel"
+    printf '  blocked  %s (not writable, or it appeared while installing)\n' "$rel"
     blocked=$((blocked + 1))
   fi
 done

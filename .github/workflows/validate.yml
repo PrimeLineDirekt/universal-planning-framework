@@ -34,23 +34,8 @@ jobs:
             echo "a .DS_Store file is tracked"; exit 1
           fi
 
-      - name: setup.sh installs into a clean project
-        run: |
-          mkdir -p /tmp/clean-project
-          ./setup.sh /tmp/clean-project --skip-existing
-          test -f /tmp/clean-project/.claude/commands/plan-new.md
-          test -f /tmp/clean-project/.claude/rules/universal-planning.md
-          test -f /tmp/clean-project/.claude/agents/planner.md
-
-      - name: setup.sh never replaces a file the user already has
-        run: |
-          mkdir -p /tmp/used-project/.claude/rules
-          echo "MINE" > /tmp/used-project/.claude/rules/universal-planning.md
-          ./setup.sh /tmp/used-project --skip-existing
-          test "$(cat /tmp/used-project/.claude/rules/universal-planning.md)" = "MINE"
-
-      - name: setup.sh refuses to install into its own checkout
-        run: |
-          if ./setup.sh . --skip-existing; then
-            echo "self-install was not refused"; exit 1
-          fi
+      # 33 assertions covering symlinks, dangling symlinks, symlinked parent
+      # directories, hard links, glob and newline characters in paths, a
+      # partially populated target, a non-interactive run and a failed write.
+      - name: install-safety suite
+        run: bash tests/install-safety.sh "$PWD" /tmp/upf-install-safety
