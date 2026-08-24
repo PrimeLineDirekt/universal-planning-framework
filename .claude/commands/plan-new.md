@@ -141,7 +141,7 @@ Assign at plan header: **High** (all validated) / **Medium** (1-2 unknowns, defa
    - **Manual**: walkthroughs, reviews, user testing (point-in-time)
    - **Ongoing Observability**: production metrics, alerts, health checks
 
-### 18 CONDITIONAL Sections (detect domain, suggest relevant ones):
+### 19 CONDITIONAL Sections (detect domain, suggest relevant ones):
 
 Auto-include based on detected domain:
 - **Software**: Rollback, Risk, Post-Completion, Execution Vehicle & Orchestration, Dependencies, Reference Library
@@ -215,6 +215,30 @@ This runs 7 meta checks as a real agent:
 
 ## Stage 4: Output + Finalization
 
+### Verify Report companion (recommended for Grade B and A)
+
+Stage 4 only DECIDES whether this plan gets a verify report. The file itself is
+written at Stage 5, when the plan actually ships. If you decide yes, record it in the
+plan's Verification section as a named deliverable, so whoever executes the plan sees
+it in the plan rather than having to remember this decision.
+
+A verify report is a sibling file that proves each Phase Gate passed, by pasting
+evidence rather than asserting an outcome. Filename is the plan's, with `-verify`:
+
+```
+plan    .claude/plans/2026-08-24-oauth-login.md
+verify  .claude/plans/2026-08-24-oauth-login-verify.md
+```
+
+Each gate is proven on three legs: what TRIGGERED the work, what EFFECT it had on
+real system state, and whether the downstream CONSUMER can use the result. A leg you
+cannot show is not proven, and the honest word for that is deferred, not done.
+
+Template and full guidance: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install. Use whichever resolves.
+
+---
+
+
 Write the complete plan to a file:
 - If `.claude/plans/` exists, write there
 - Otherwise write to current directory
@@ -246,29 +270,6 @@ Present a structured summary to the user:
 ```
 
 Then ask: "Plan complete. Should I start implementing?"
-
-### Verify Report companion (recommended for Grade B and A)
-
-Stage 4 only DECIDES whether this plan gets a verify report. The file itself is
-written at Stage 5, when the plan actually ships. If you decide yes, record it in the
-plan's Verification section as a named deliverable, so whoever executes the plan sees
-it in the plan rather than having to remember this decision.
-
-A verify report is a sibling file that proves each Phase Gate passed, by pasting
-evidence rather than asserting an outcome. Filename is the plan's, with `-verify`:
-
-```
-plan    .claude/plans/2026-08-24-oauth-login.md
-verify  .claude/plans/2026-08-24-oauth-login-verify.md
-```
-
-Each gate is proven on three legs: what TRIGGERED the work, what EFFECT it had on
-real system state, and whether the downstream CONSUMER can use the result. A leg you
-cannot show is not proven, and the honest word for that is deferred, not done.
-
-Template and full guidance: [`.claude/templates/verify-report-template.md`](../templates/verify-report-template.md).
-
----
 
 ## Summary: Complete Phase Sequence
 
@@ -332,7 +333,7 @@ These rules apply while the plan is being executed, not while it is being writte
 **1a. Verify report (if the plan named one at Stage 4):**
 - Write the sibling `<plan-filename>-verify.md` now, before declaring the plan done.
 - One entry per phase, each quoting the gate from the plan verbatim and pasting the trigger, the effect and the consumer evidence.
-- Template: [`.claude/templates/verify-report-template.md`](../templates/verify-report-template.md).
+- Template: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install.
 
 **1b. Deferred & follow-up disclosure (required before declaring done):**
 - Anything that could NOT be completed - a verification left untested, a phase only partially done, an issue found-but-unfixed - MUST be recorded as a follow-up task AND in the closeout, stating WHAT it is and WHY (a short reason: time-dependent / external-blocker / risky-no-rollback / needs-design / out-of-scope). Never silently drop it. If nothing was deferred, say so explicitly.

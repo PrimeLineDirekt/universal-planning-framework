@@ -42,7 +42,7 @@ nothing about the other two.
 
 ## Template
 
-```markdown
+````markdown
 # Verify Report: <plan title>
 
 **Plan file**: `.claude/plans/<plan-filename>.md`
@@ -99,13 +99,13 @@ Records the vehicle the plan chose at Stage 0.5 against the one execution
 actually used. This is what keeps the vehicle rubric falsifiable: without it,
 a bad rule is never contradicted by anything.
 
-| Phase | Planned vehicle | Planned tier | Actually used | Mismatch |
+| Phase | Planned vehicle | Planned routing | Actually used | Mismatch |
 |-------|-----------------|--------------|---------------|----------|
-| 1 | <vehicle> | <tier> | <observed> | none / over-vehicled / under-vehicled / mis-tiered |
+| 1 | <vehicle> | <routing> | <observed> | none / over-vehicled / under-vehicled / mis-routed |
 
 - **over-vehicled**: a heavy vehicle was chosen and barely used, for example a workflow where only one stage did real work.
 - **under-vehicled**: a light vehicle was chosen and the work had to be fanned out by hand mid-task.
-- **mis-tiered**: a bulk or mechanical stage ran on the most expensive model, or the strongest model was used as a delegation target rather than an orchestrator.
+- **mis-routed**: a bulk or mechanical stage ran on the most expensive model, or the strongest model was used as a delegation target rather than an orchestrator.
 
 If every phase reads `none`, say so explicitly. Anything else is input for the
 next revision of the rubric.
@@ -152,7 +152,7 @@ appears, with one row saying so.
 | Reviewer | <name> | YYYY-MM-DD | <reference> |
 
 A solo project keeps the implementer row and drops the reviewer row.
-```
+````
 
 ---
 

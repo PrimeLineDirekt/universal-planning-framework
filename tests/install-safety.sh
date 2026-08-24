@@ -40,6 +40,9 @@ PAYLOAD=$(find "$REPO/.claude" -type f \
   ! -name '.DS_Store' ! -name 'Thumbs.db' \
   ! -name '*.swp' ! -name '*.swo' ! -name '*~' ! -name '.#*' \
   | wc -l | tr -d ' ')
+# A PAYLOAD of 0 would make cases 1a and 11 pass against an installer that
+# installed nothing, which is the exact class this file exists to catch.
+[ "$PAYLOAD" -gt 0 ] || { echo "PAYLOAD resolved to 0 - no source files found" >&2; exit 2; }
 # Same trap as setup.sh's mode_of: `-f` is "format" on BSD stat and "filesystem
 # status" on GNU stat, so the BSD form succeeds on Linux with the wrong answer.
 # Validate that the result is octal rather than trusting the exit status.

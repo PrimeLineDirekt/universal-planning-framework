@@ -96,7 +96,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 
 **Review Checkpoints:** Every 2 phases of implementation, a review checkpoint is mandatory. For security-sensitive work, every phase. Review checkpoints are binary gates: "Code review confirms no critical issues" or "Cross-reference check: new code follows existing patterns."
 
-**18 CONDITIONAL Sections (add when relevant):**
+**19 CONDITIONAL Sections (add when relevant):**
 
 - **Rollback / Undo Strategy** - Trigger, steps, data recovery, duration, point of no return. *(Activate: changes hard to reverse)*
 - **Risk Assessment** - Likelihood, impact, mitigation, detection trigger per risk. *(Activate: high stakes or complexity >= 5 phases)*
@@ -115,6 +115,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 - **Reference Library** - Official docs, best practices, standards consulted. Format: `[source] | [version/date] | [what it informed] | [link]`. **Mandatory for Software, Data, Infrastructure domains when plan has 3+ phases.** Should be embedded/linked in final deliverable. *(Activate: coding domains, or any plan consulting external sources)*
 - **Learning & Knowledge Capture** - What was learned, where captured, when, for whom. *(Activate: research, multi-session, AI agent plans, new technology)*
 - **Feedback Architecture** - What feedback collected, how routed back, decision threshold. *(Activate: iterative work, user-facing features, content series)*
+- **Verify Report** - a sibling `<plan>-verify.md` proving each Phase Gate on three legs: what TRIGGERED the work, what EFFECT it had on real system state, and whether the downstream CONSUMER can use the result. A leg you cannot show is deferred, not done. Decided at Stage 4, written at Stage 5. Template: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install. *(Activate: Grade B or A plans that ship real artifacts)*
 - **Completion Gate** - Before declaring a plan DONE, verify: (1) Registration - all artifacts registered where they belong, (2) Connections - cross-references and relationships established, (3) Documentation - README, CHANGELOG, indexes updated, (4) Orphan Detection - no unreferenced files or partial work, (5) Consistency - versions, counts, terms consistent across all files. Each project defines its own registration points. *(Activate: multi-file changes, system integration work, plans producing artifacts that must be registered somewhere. Skip: single-file changes, purely internal work)*
 
 ---
