@@ -107,8 +107,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 - **Security & Privacy** - Sensitive data, threats, controls, audit method. *(Activate: sensitive data or access involved)*
 - **Resume Protocol** - TL;DR (update each session), context load order, last completed, next action, blockers. *(Activate: >10h effort, multi-session)*
 - **Incremental Delivery** - MVP definition, "good enough" threshold, natural stopping points. *(Activate: >5 phases or >20h effort)*
-- **Delegation & Team Strategy** - Who/what per phase, interface contracts, verification of delegated output. *(Activate: work can be parallelized)*
-- **Execution Vehicle & Orchestration** - per-phase execution vehicle (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) + per-stage model tier, auto-inferred at Stage 0.5. Collapses to one `Default Vehicle` line, renders only deviations; selection is always silent. Rubric: `.claude/rules/vehicle-selection.md` in a project install, or the `vehicle-selection` skill in a plugin install. *(Activate: ALWAYS - every plan gets a Default Vehicle)*
+- **Execution Vehicle & Orchestration** - who or what runs each phase, the interface contract for delegated work, and how its output is verified. Also the per-phase execution vehicle (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) + per-stage model tier, auto-inferred at Stage 0.5. Collapses to one `Default Vehicle` line, renders only deviations; selection is always silent. Rubric: `.claude/rules/vehicle-selection.md` in a project install, or the `vehicle-selection` skill in a plugin install. *(Activate: ALWAYS - every plan gets a Default Vehicle)*
 - **Dependencies & Blockers** - Type, status, fallback, lead time per dependency. *(Activate: external dependencies exist)*
 - **Related Work & Integration** - Project, relationship type, coordination needs. *(Activate: connects to other projects)*
 - **Timeline & Deadlines** - Duration per phase with 20%+ buffer, hard deadline + consequence. *(Activate: hard deadlines exist)*
@@ -202,12 +201,12 @@ When a replanning trigger fires, follow these 6 steps:
 Automatically include relevant CONDITIONAL sections based on domain (8 domains):
 
 **Software Development:**
-- Dependencies, Risks, Rollback, Post-Completion, Delegation, Reference Library
+- Dependencies, Risks, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
 - Completion Gate: exports/imports valid, tests cover new code, API docs updated, package/module registered in project index
 - Review Checkpoints: every 2 phases. Scope-based phases.
 
 **Multi-Agent / AI System:**
-- Dependencies, Risks, Delegation, Security, Post-Completion, Reference Library
+- Dependencies, Risks, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 - Completion Gate: agent configs registered, prompts versioned, model settings documented, tool registrations complete
 - Review Checkpoints: every 2 phases. Scope-based phases.
 

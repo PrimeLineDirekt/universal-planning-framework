@@ -81,13 +81,13 @@ For each phase the rubric emits: (a) a **VEHICLE** (single agent / sub-agents / 
 
 **Output discipline (collapse when uniform, render only deviations):**
 
-- The most-common (vehicle, tier) pair across phases becomes the plan-level **Default Vehicle**.
-- Emit ONE header line on the plan: `**Default Vehicle:** <vehicle> (<tier>)`.
+- The most-common (vehicle, routing) pair across phases becomes the plan-level **Default Vehicle**.
+- Emit ONE header line on the plan: `**Default Vehicle:** <vehicle> (<routing>)`.
 - Phases matching the default render **nothing**. They inherit it silently.
 - Only deviations render, as a one-line tag on that phase:
-  `> Vehicle: <vehicle> - <tier> - <one-line reason>`
+  `> Vehicle: <vehicle> - <routing> - <one-line reason>`
 - A **uniform plan** shows exactly the one header line, zero per-phase rows, zero prompts. A **trivial one-phase plan** shows `Default Vehicle: Single (self)` and nothing else.
-- A vehicle flagged opt-in (dynamic workflow) or ask-user (agent team) carries that flag verbatim as a trigger-time note for whoever executes the plan, never as a planning-time prompt.
+- A vehicle the rubric flags `[propose/opt-in]` (dynamic workflow) or `[ask-user]` (agent team, tmux) carries that flag verbatim as a trigger-time note for whoever executes the plan, never as a planning-time prompt. The rubric is the source of truth for which vehicles carry a flag; do not treat this line as the full list.
 
 This step adds no interactive prompt and changes no runtime behaviour. It records the planned vehicle and tier as a plan OUTPUT, for the person or agent executing the plan to act on later.
 
@@ -134,7 +134,7 @@ Assign at plan header: **High** (all validated) / **Medium** (1-2 unknowns, defa
    - **Non-coding domains**: Effort estimate (rough guide), deliverable, binary gate
    - Gates must be binary (pass/fail, verifiable - NOT "code complete" or "looks good")
    - Review Checkpoint every 2 phases (coding) or per milestone (non-coding)
-   - **Execution vehicle** (from Stage 0.5): every phase carries an inferred vehicle and, for multi-agent vehicles, a model tier. Render it ONLY where it deviates from the plan-level Default Vehicle. Uniform plans show just the one header line.
+   - **Execution vehicle** (from Stage 0.5): every phase carries an inferred vehicle and, for multi-agent vehicles, its model routing. Render it ONLY where it deviates from the plan-level Default Vehicle. Uniform plans show just the one header line.
 
 5. **Verification** - Split into three:
    - **Automated**: tests, CI, linters (point-in-time)
@@ -250,8 +250,9 @@ Then ask: "Plan complete. Should I start implementing?"
 ### Verify Report companion (recommended for Grade B and A)
 
 Stage 4 only DECIDES whether this plan gets a verify report. The file itself is
-written at Stage 5, when the plan actually ships. If you decide yes, list it in the
-plan's CONDITIONAL sections so whoever executes the plan knows to produce it.
+written at Stage 5, when the plan actually ships. If you decide yes, record it in the
+plan's Verification section as a named deliverable, so whoever executes the plan sees
+it in the plan rather than having to remember this decision.
 
 A verify report is a sibling file that proves each Phase Gate passed, by pasting
 evidence rather than asserting an outcome. Filename is the plan's, with `-verify`:
@@ -281,7 +282,7 @@ Stage 1.5:   Interview (/interview-plan skill - NOT inline)
 Stage 2:     Hardening (/plan-refine skill - NOT inline)
 Stage 3:     Review + Meta (/plan-review skill - NOT inline)
 Stage 4:     Output + Plan Summary + "Should I implement?"
-Stage 5:     Execution (Code Review/Phase, Dependencies, Sub-Agents, Dormant Files, Docs, Memory)
+Stage 5:     Execution (Code Review/Phase, Verify Report, Dependencies, Dormant Files, Docs, Memory)
 ```
 
 ALL stages are mandatory. None may be replaced by inline text or self-written notes.
@@ -290,7 +291,7 @@ ALL stages are mandatory. None may be replaced by inline text or self-written no
 
 ## Stage 5: Execution Rules (during plan implementation)
 
-These rules apply when the plan is being executed. They are also persistently stored in `knowledge/rules/workflow/plan-execution.md` (intentional duplication for reliability).
+These rules apply while the plan is being executed, not while it is being written.
 
 ### After EVERY Phase (required)
 
@@ -327,6 +328,11 @@ These rules apply when the plan is being executed. They are also persistently st
 **1. Verification Before Completion + final re-check:**
 - No completion claim without fresh verification. Run all tests, read output, THEN claim success (`superpowers:verification-before-completion`).
 - **Re-verify EVERY phase gate actually PASSED** with its evidence (not just "the work was done"). Produce an explicit final status: either "all phases DONE + verified" OR a listed set of OPEN ITEMS. Never declare done while any gate is unproven.
+
+**1a. Verify report (if the plan named one at Stage 4):**
+- Write the sibling `<plan-filename>-verify.md` now, before declaring the plan done.
+- One entry per phase, each quoting the gate from the plan verbatim and pasting the trigger, the effect and the consumer evidence.
+- Template: [`.claude/templates/verify-report-template.md`](../templates/verify-report-template.md).
 
 **1b. Deferred & follow-up disclosure (required before declaring done):**
 - Anything that could NOT be completed - a verification left untested, a phase only partially done, an issue found-but-unfixed - MUST be recorded as a follow-up task AND in the closeout, stating WHAT it is and WHY (a short reason: time-dependent / external-blocker / risky-no-rollback / needs-design / out-of-scope). Never silently drop it. If nothing was deferred, say so explicitly.
@@ -394,4 +400,3 @@ Whatever survives the session is what the next person or agent starts from.
 - 21 anti-patterns to check (not 12)
 - 8 domains to detect (not 6)
 - NEVER claim a stage is complete without having actually run the corresponding skill/tool
-- Execution Rules (Stage 5) are also in `knowledge/rules/workflow/plan-execution.md` (intentional duplication)

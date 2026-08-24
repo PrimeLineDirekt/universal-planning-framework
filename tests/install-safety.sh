@@ -33,7 +33,13 @@ chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; 
 # hardcoded, so adding a file to .claude/ does not silently stale this suite.
 # Safe as a count ONLY because case 1b diffs the installed tree against the
 # source independently; a count alone would pass on the wrong files.
-PAYLOAD=$(find "$REPO/.claude" -type f ! -name '.DS_Store' | wc -l | tr -d ' ')
+# The filter MUST match setup.sh's collector. A hand-copied subset drifts: an
+# open editor's .swp file would inflate PAYLOAD while setup.sh correctly skips it,
+# and the suite would fail with no installer defect. Derived from setup.sh itself.
+PAYLOAD=$(find "$REPO/.claude" -type f \
+  ! -name '.DS_Store' ! -name 'Thumbs.db' \
+  ! -name '*.swp' ! -name '*.swo' ! -name '*~' ! -name '.#*' \
+  | wc -l | tr -d ' ')
 # Same trap as setup.sh's mode_of: `-f` is "format" on BSD stat and "filesystem
 # status" on GNU stat, so the BSD form succeeds on Linux with the wrong answer.
 # Validate that the result is octal rather than trusting the exit status.
@@ -53,7 +59,8 @@ n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
 chk "1a clean target installs the whole payload" "$n" "$PAYLOAD"
 # Counting files says nothing about their CONTENT. Without this, an installer
 # that truncated every copy would pass the whole suite.
-if diff -r -x '.DS_Store' "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
+if diff -r -x '.DS_Store' -x 'Thumbs.db' -x '*.swp' -x '*.swo' -x '*~' -x '.#*' \
+     "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
   ok "1b installed tree is byte-identical to the source"
 else
   bad "1b installed tree differs from the source (see $LAB/c1.diff)"

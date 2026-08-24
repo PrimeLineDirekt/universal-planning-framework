@@ -1,7 +1,7 @@
 # Universal Planning Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.3.1-green.svg)]()
 [![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-orange.svg)]()
 
 
@@ -190,8 +190,8 @@ For multi-agent vehicles the plan also names the **model tier per stage**: the s
 
 | Domain | Key Sections | Phase Sizing | Review Frequency |
 |--------|-------------|-------------|-----------------|
-| Software Development | Rollback, Risk, Delegation, Reference Library | Scope-based | Every 2 phases |
-| Multi-Agent / AI | Risk, Delegation, Security, Reference Library | Scope-based | Every 2 phases |
+| Software Development | Rollback, Risk, Execution Vehicle & Orchestration, Reference Library | Scope-based | Every 2 phases |
+| Multi-Agent / AI | Risk, Execution Vehicle & Orchestration, Security, Reference Library | Scope-based | Every 2 phases |
 | Business / Strategy | Timeline, Budget, Stakeholders, Validation | Time-based | Per milestone |
 | Content / Marketing | Timeline, Validation, Legal, Feedback Architecture | Time-based | Per draft |
 | Infrastructure / DevOps | Rollback, Risk, Dependencies, Reference Library | Mixed | Every phase |

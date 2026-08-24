@@ -66,8 +66,8 @@ Use the Read tool to load the plan file.
 
 ### Step 6: Check CONDITIONAL Sections
 
-**Software:** Dependencies, Risk, Rollback, Post-Completion, Delegation, Reference Library
-**AI/Agent:** Dependencies, Risk, Delegation, Security, Post-Completion, Reference Library
+**Software:** Dependencies, Risk, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
+**AI/Agent:** Dependencies, Risk, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 **Business:** Timeline, Budget, Stakeholders, User Validation
 **Content:** Timeline, User Validation, Legal, Feedback Architecture
 **Infrastructure:** Dependencies, Risk, Rollback, Post-Completion, Resume Protocol, Reference Library

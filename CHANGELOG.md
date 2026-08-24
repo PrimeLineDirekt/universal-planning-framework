@@ -2,6 +2,31 @@
 
 All notable changes to the Universal Planning Framework are documented here.
 
+## [1.3.1] - 2026-08-24
+
+### Added
+- **Verify report.** A plan says what should happen; nothing in the framework made
+  anyone show that it did. A Grade B or A plan can now ship with a sibling
+  `<plan>-verify.md` proving each Phase Gate on three legs: what triggered the work,
+  what effect it had on real system state, and whether the downstream consumer can
+  use the result. Template at `.claude/templates/verify-report-template.md`, adapted
+  from the OpenSpec `verify-report.md` pattern in Gentleman-Programming/engram (MIT).
+  Stage 4 decides whether a plan gets one; Stage 5 writes it.
+
+### Fixed
+- `plan-new` told you to register components in `_stats.json`, `_graph/edges.json`
+  and `_memory/projects/{project}.json`, and to persist through a specific knowledge
+  base. Those are one particular setup's layout, not yours. The steps now describe
+  what to look for instead of naming files that do not exist in your project.
+- The CONDITIONAL section for execution vehicles was called **Delegation** in the
+  domain lists and **Execution Vehicle & Orchestration** in its own definition, and
+  both names were live across the rulebook, both commands, the planner agent and the
+  README. They now agree. The old standalone `Delegation & Team Strategy` section is
+  merged into it, which also restores the count to the 18 the heading claims.
+- The README described the ecosystem twice, in two tables that disagreed, one of
+  which still called this framework "3-stage planning".
+- Quick Start now notes that a plugin install namespaces the commands.
+
 ## [1.3.0] - 2026-08-24
 
 Distribution release. The framework content is unchanged; how you get it is not.
