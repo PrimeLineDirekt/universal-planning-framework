@@ -201,7 +201,7 @@ write_new() {
   local src=$1 dst=$2
   ( set -o noclobber; : > "$dst" ) 2>/dev/null || return 1
   if ! write_via_temp "$src" "$dst"; then
-    # Give back the name we reserved, but only while it is still the empty
+    # Give back the reserved name, but only while it is still the empty
     # placeholder this function created.
     if [ -f "$dst" ] && [ ! -s "$dst" ]; then rm -f -- "$dst"; fi
     return 1
