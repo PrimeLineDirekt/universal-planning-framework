@@ -74,6 +74,8 @@ Use the Read tool to load the plan file.
 **Data:** Dependencies, Risk, Rollback, Legal, Security, Post-Completion, Reference Library
 **Research:** Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
+
 Additionally: >10h -> Resume Protocol? >5 phases -> Incremental Delivery? Coding 3+ phases -> Reference Library? Multi-file + artifact registration -> Completion Gate?
 
 ### Step 7: Scan for Anti-Patterns (21 total)

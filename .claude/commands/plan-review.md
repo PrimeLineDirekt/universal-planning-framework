@@ -72,6 +72,9 @@ Based on detected domain, verify relevant sections are present:
 **Research / Exploration:** Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 **Multi-Domain:** Union of all sections from matched domains
 
+> **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan it renders as that one line and no named section, which is correct. Do not flag it as a missing section.
+
+
 **Additionally check:**
 - >10h effort -> Resume Protocol present?
 - >5 phases or >20h -> Incremental Delivery present?

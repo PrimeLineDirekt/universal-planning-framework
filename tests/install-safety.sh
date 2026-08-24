@@ -39,7 +39,7 @@ chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; 
 PAYLOAD=$(find "$REPO/.claude" -type f \
   ! -name '.DS_Store' ! -name 'Thumbs.db' \
   ! -name '*.swp' ! -name '*.swo' ! -name '*~' ! -name '.#*' \
-  | wc -l | tr -d ' ')
+  -print0 | tr -cd '\0' | wc -c | tr -d ' ')
 # A PAYLOAD of 0 would make cases 1a and 11 pass against an installer that
 # installed nothing, which is the exact class this file exists to catch.
 [ "$PAYLOAD" -gt 0 ] || { echo "PAYLOAD resolved to 0 - no source files found" >&2; exit 2; }

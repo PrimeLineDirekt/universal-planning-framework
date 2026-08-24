@@ -22,7 +22,9 @@ All notable changes to the Universal Planning Framework are documented here.
   domain lists and **Execution Vehicle & Orchestration** in its own definition, and
   both names were live across the rulebook, both commands, the planner agent and the
   README. They now agree. The old standalone `Delegation & Team Strategy` section is
-  merged into it, which also restores the count to the 18 the heading claims.
+  merged into it. Adding the verify report as a section of its own takes the count
+  to 19, and the claimed number now matches the actual list in all three files
+  that assert it.
 - The README described the ecosystem twice, in two tables that disagreed, one of
   which still called this framework "3-stage planning".
 - Quick Start now notes that a plugin install namespaces the commands.

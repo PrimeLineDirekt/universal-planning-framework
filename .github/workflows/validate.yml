@@ -64,6 +64,32 @@ jobs:
       - name: install-safety suite
         run: bash tests/install-safety.sh "$PWD" /tmp/upf-install-safety
 
+      # Every ${CLAUDE_PLUGIN_ROOT} reference anywhere in the repo must name a file
+      # that exists. A rename would break the plugin route silently, since the plugin
+      # still installs cleanly. Globbing skills/ only missed the three references the
+      # verify report added in the commands and the rulebook.
+      - name: plugin-root references point at files that exist
+        run: |
+          missing=0
+          found=0
+          while IFS= read -r f; do
+            while IFS= read -r ref; do
+              rel=${ref#\$\{CLAUDE_PLUGIN_ROOT\}/}
+              found=$((found + 1))
+              if [ ! -e "$rel" ]; then echo "$f points at missing $rel"; missing=1; fi
+            done < <(grep -o '\${CLAUDE_PLUGIN_ROOT}/[A-Za-z0-9_./-]*' "$f" || true)
+          done < <(git ls-files '*.md')
+          echo "checked $found plugin-root reference(s)"
+          test "$found" -gt 0
+          test "$missing" -eq 0
+
+      # Every check here exists because a review round found the defect it catches.
+      - name: documentation checks
+        run: python3 tests/doc-checks.py
+
+      - name: install-safety suite
+        run: bash tests/install-safety.sh "$PWD" /tmp/upf-install-safety
+
       # The plugin route reaches the rulebook only through these two paths. A
       # rename would break it silently, since the plugin still installs cleanly.
       - name: skill loaders point at files that exist

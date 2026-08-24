@@ -152,6 +152,9 @@ Auto-include based on detected domain:
 - **Data & Analytics**: Dependencies, Risk, Rollback, Legal, Security, Post-Completion, Reference Library
 - **Research**: Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
+
+
 Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 phases), Related Work, Stakeholders, Security, Legal, Feedback Architecture, Learning & Knowledge Capture, Completion Gate (multi-file changes, system integration, artifact registration needed).
 
 **Reference Library** (mandatory for Software, Data, Infrastructure with 3+ phases): List official docs and best practices consulted. Format: `[source] | [version/date] | [what it informed] | [link]`.
@@ -236,8 +239,7 @@ cannot show is not proven, and the honest word for that is deferred, not done.
 
 Template and full guidance: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install. Use whichever resolves.
 
----
-
+### Plan file
 
 Write the complete plan to a file:
 - If `.claude/plans/` exists, write there
@@ -270,6 +272,8 @@ Present a structured summary to the user:
 ````
 
 Then ask: "Plan complete. Should I start implementing?"
+
+---
 
 ## Summary: Complete Phase Sequence
 
