@@ -66,15 +66,17 @@ Use the Read tool to load the plan file.
 
 ### Step 6: Check CONDITIONAL Sections
 
-**Software:** Dependencies, Risk, Rollback, Post-Completion, Delegation, Reference Library
-**AI/Agent:** Dependencies, Risk, Delegation, Security, Post-Completion, Reference Library
+**Software:** Dependencies, Risk, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
+**AI/Agent:** Dependencies, Risk, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 **Business:** Timeline, Budget, Stakeholders, User Validation
 **Content:** Timeline, User Validation, Legal, Feedback Architecture
 **Infrastructure:** Dependencies, Risk, Rollback, Post-Completion, Resume Protocol, Reference Library
 **Data:** Dependencies, Risk, Rollback, Legal, Security, Post-Completion, Reference Library
 **Research:** Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 
-Additionally: >10h -> Resume Protocol? >5 phases -> Incremental Delivery? Coding 3+ phases -> Reference Library? Multi-file + artifact registration -> Completion Gate?
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
+
+Additionally: >10h -> Resume Protocol? >5 phases -> Incremental Delivery? Coding 3+ phases -> Reference Library? Multi-file + artifact registration -> Completion Gate? Grade B/A shipping real artifacts -> Verify Report named as a deliverable?
 
 ### Step 7: Scan for Anti-Patterns (21 total)
 
@@ -142,7 +144,7 @@ If Stage 0 exists: every finding addressed or dismissed in plan? (anti-pattern #
 
 ## Report Format
 
-```markdown
+````markdown
 # Plan Review Report
 
 **Plan:** [filename] | **Domain:** [detected] | **Grade:** [C/B/A] | **Confidence:** [H/M/L]
@@ -201,7 +203,7 @@ Based on [domain] domain:
 ## Bottom Line
 
 [1-2 sentences: grade, what's strong, what must be fixed, recommendation]
-```
+````
 
 ---
 

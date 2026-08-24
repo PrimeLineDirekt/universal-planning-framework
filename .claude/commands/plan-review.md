@@ -63,8 +63,8 @@ Determine which domain(s) apply:
 
 Based on detected domain, verify relevant sections are present:
 
-**Software Development:** Dependencies, Risk, Rollback, Post-Completion, Delegation, Reference Library
-**Multi-Agent / AI:** Dependencies, Risk, Delegation, Security, Post-Completion, Reference Library
+**Software Development:** Dependencies, Risk, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
+**Multi-Agent / AI:** Dependencies, Risk, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 **Business / Strategy:** Timeline, Budget, Stakeholders, User Validation
 **Content / Marketing:** Timeline, User Validation, Legal, Feedback Architecture
 **Infrastructure / DevOps:** Dependencies, Risk, Rollback, Post-Completion, Resume Protocol, Reference Library
@@ -72,12 +72,16 @@ Based on detected domain, verify relevant sections are present:
 **Research / Exploration:** Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 **Multi-Domain:** Union of all sections from matched domains
 
+> **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan it renders as that one line and no named section, which is correct. Do not flag it as a missing section.
+
+
 **Additionally check:**
 - >10h effort -> Resume Protocol present?
 - >5 phases or >20h -> Incremental Delivery present?
 - Coding domain with 3+ phases -> Reference Library present?
 - Coding domain -> Review Checkpoints in phases?
 - Multi-file plan with artifact registration -> Completion Gate present?
+- Grade B or A and the plan ships real artifacts -> is a Verify Report named as a deliverable? (the report itself is written at Stage 5, so at review time look for the plan naming it, not for the file)
 
 ### 5. Anti-Pattern Scan (21 total)
 
@@ -182,7 +186,7 @@ Every plan carries a **Default Vehicle** (from Stage 0.5; the rubric is at `.cla
 
 ## Report Format
 
-```markdown
+````markdown
 # Plan Review Report
 
 **Plan:** [filename] | **Domain:** [detected] | **Grade:** [C/B/A] | **Confidence:** [H/M/L]
@@ -241,7 +245,7 @@ Based on [domain] domain:
 ## Bottom Line
 
 [1-2 sentences: grade, what's strong, what must be fixed, recommendation]
-```
+````
 
 ---
 

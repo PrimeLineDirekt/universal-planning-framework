@@ -79,7 +79,17 @@ After Discovery, before drafting phases, run the **execution-vehicle rubric** fo
 
 For each phase the rubric emits: (a) a **VEHICLE** (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) from raw signals (complexity, independent-stream count, decomposition shape, reversibility), with an optional adaptive delegation score as a BOUNDED tiebreaker (single-agent<->sub-agent boundary only); (b) for multi-agent vehicles, the **model tier per stage** (strongest model for orchestration/synthesis only, mid-tier for delegated work, fast/local model for simple or bulk steps).
 
-**Output discipline (collapse-when-uniform):** the most-common (vehicle, routing) across phases becomes the plan-level `Default Vehicle` header line; phases matching it render nothing; only deviations render a one-line tag. A uniform plan shows one line, a trivial 1-phase plan shows `Default Vehicle: Single (self)` - both with zero prompts. Vehicles flagged propose/opt-in (dynamic workflow) or ask-user (agent team, tmux) carry that flag as a trigger-time note, never a planning-time prompt.
+**Output discipline (collapse when uniform, render only deviations):**
+
+- The most-common (vehicle, routing) pair across phases becomes the plan-level **Default Vehicle**.
+- Emit ONE header line on the plan: `**Default Vehicle:** <vehicle> (<routing>)`.
+- Phases matching the default render **nothing**. They inherit it silently.
+- Only deviations render, as a one-line tag on that phase:
+  `> Vehicle: <vehicle> - <routing> - <one-line reason>`
+- A **uniform plan** shows exactly the one header line, zero per-phase rows, zero prompts. A **trivial one-phase plan** shows `Default Vehicle: Single (self)` and nothing else.
+- A vehicle the rubric flags `[propose/opt-in]` (dynamic workflow) or `[ask-user]` (agent team, tmux) carries that flag verbatim as a trigger-time note for whoever executes the plan, never as a planning-time prompt. The rubric is the source of truth for which vehicles carry a flag; do not treat this line as the full list.
+
+This step adds no interactive prompt and changes no runtime behaviour. It records the planned vehicle and tier as a plan OUTPUT, for the person or agent executing the plan to act on later.
 
 ---
 
@@ -124,24 +134,28 @@ Assign at plan header: **High** (all validated) / **Medium** (1-2 unknowns, defa
    - **Non-coding domains**: Effort estimate (rough guide), deliverable, binary gate
    - Gates must be binary (pass/fail, verifiable - NOT "code complete" or "looks good")
    - Review Checkpoint every 2 phases (coding) or per milestone (non-coding)
+   - **Execution vehicle** (from Stage 0.5): every phase carries an inferred vehicle and, for multi-agent vehicles, its model routing. Render it ONLY where it deviates from the plan-level Default Vehicle. Uniform plans show just the one header line.
 
 5. **Verification** - Split into three:
    - **Automated**: tests, CI, linters (point-in-time)
    - **Manual**: walkthroughs, reviews, user testing (point-in-time)
    - **Ongoing Observability**: production metrics, alerts, health checks
 
-### 18 CONDITIONAL Sections (detect domain, suggest relevant ones):
+### 19 CONDITIONAL Sections (detect domain, suggest relevant ones):
 
 Auto-include based on detected domain:
-- **Software**: Rollback, Risk, Post-Completion, Delegation, Dependencies, Reference Library
-- **AI/Agent**: Risk, Delegation, Security, Post-Completion, Dependencies, Reference Library
+- **Software**: Rollback, Risk, Post-Completion, Execution Vehicle & Orchestration, Dependencies, Reference Library
+- **AI/Agent**: Risk, Execution Vehicle & Orchestration, Security, Post-Completion, Dependencies, Reference Library
 - **Business**: Timeline, Budget, Stakeholders, User Validation
 - **Content**: Timeline, User Validation, Legal, Feedback Architecture
 - **Infrastructure**: Rollback, Risk, Dependencies, Post-Completion, Resume Protocol, Reference Library
 - **Data & Analytics**: Dependencies, Risk, Rollback, Legal, Security, Post-Completion, Reference Library
 - **Research**: Incremental Delivery, Budget, Related Work, Post-Completion, Risk, Learning & Knowledge Capture
 
-Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 phases), Related Work, Stakeholders, Security, Legal, Feedback Architecture, Learning & Knowledge Capture, Completion Gate (multi-file changes, system integration, artifact registration needed).
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
+
+
+Additional sections available: Resume Protocol (>10h), Incremental Delivery (>5 phases), Related Work, Stakeholders, Security, Legal, Feedback Architecture, Learning & Knowledge Capture, Verify Report (Grade B/A shipping real artifacts), Completion Gate (multi-file changes, system integration, artifact registration needed).
 
 **Reference Library** (mandatory for Software, Data, Infrastructure with 3+ phases): List official docs and best practices consulted. Format: `[source] | [version/date] | [what it informed] | [link]`.
 
@@ -204,17 +218,40 @@ This runs 7 meta checks as a real agent:
 
 ## Stage 4: Output + Finalization
 
+### Verify Report companion (recommended for Grade B and A)
+
+Stage 4 only DECIDES whether this plan gets a verify report. The file itself is
+written at Stage 5, when the plan actually ships. If you decide yes, record it in the
+plan's Verification section as a named deliverable, so whoever executes the plan sees
+it in the plan rather than having to remember this decision.
+
+A verify report is a sibling file that proves each Phase Gate passed, by pasting
+evidence rather than asserting an outcome. Filename is the plan's, with `-verify`:
+
+```
+plan    .claude/plans/2026-08-24-oauth-login.md
+verify  .claude/plans/2026-08-24-oauth-login-verify.md
+```
+
+Each gate is proven on three legs: what TRIGGERED the work, what EFFECT it had on
+real system state, and whether the downstream CONSUMER can use the result. A leg you
+cannot show is not proven, and the honest word for that is deferred, not done.
+
+Template and full guidance: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install. Use whichever resolves.
+
+### Plan file
+
 Write the complete plan to a file:
 - If `.claude/plans/` exists, write there
 - Otherwise write to current directory
 
-Include at the top: Quality Grade (C/B/A), Confidence Level (High/Medium/Low), date.
+Include at the top: Quality Grade (C/B/A), Confidence Level (High/Medium/Low), date, and the **Default Vehicle** from Stage 0.5 (for example `Default Vehicle: Single (self)` on a uniform plan, with any per-phase deviations rendered inline).
 
 ### Plan Summary (required)
 
 Present a structured summary to the user:
 
-```markdown
+````markdown
 ## Plan Summary: {title}
 
 **What will be built/changed:**
@@ -232,7 +269,7 @@ Present a structured summary to the user:
 
 **Effort**: {estimated} | **Files**: {count new/changed} | **LOC**: {estimated}
 **Confidence**: {High/Medium/Low} | **Grade**: {A/B/C}
-```
+````
 
 Then ask: "Plan complete. Should I start implementing?"
 
@@ -250,7 +287,7 @@ Stage 1.5:   Interview (/interview-plan skill - NOT inline)
 Stage 2:     Hardening (/plan-refine skill - NOT inline)
 Stage 3:     Review + Meta (/plan-review skill - NOT inline)
 Stage 4:     Output + Plan Summary + "Should I implement?"
-Stage 5:     Execution (Code Review/Phase, Dependencies, Sub-Agents, Dormant Files, Docs, Memory)
+Stage 5:     Execution (Code Review/Phase, Sub-Agents, Verify Report, Dependencies, Dormant Files, Docs, Memory)
 ```
 
 ALL stages are mandatory. None may be replaced by inline text or self-written notes.
@@ -259,7 +296,7 @@ ALL stages are mandatory. None may be replaced by inline text or self-written no
 
 ## Stage 5: Execution Rules (during plan implementation)
 
-These rules apply when the plan is being executed. They are also persistently stored in `knowledge/rules/workflow/plan-execution.md` (intentional duplication for reliability).
+These rules apply while the plan is being executed, not while it is being written.
 
 ### After EVERY Phase (required)
 
@@ -274,15 +311,13 @@ These rules apply when the plan is being executed. They are also persistently st
 - Paste the outcome evidence into the gate result. Inferred outcomes ("should work", "the doc says so") do NOT count.
 - If a leg genuinely cannot be tested yet, record it as deferred-and-untested with a reason (disclosed at Plan Completion).
 
-**2. Check core root files (dependencies):**
-- Read `knowledge/references/audit-hidden-dependencies.md` - check 6 Consumer Pathways
-- Read `knowledge/architecture.md` - check Component Connection Pathways
-- Question: Does this change affect other components?
-- Check: edges.json, context-router.json, detection-index.json, _stats.json, SYSTEM-MAP.md, knowledge-nodes.json
-- Full matrix: CLAUDE.md → Integration Matrix
+**2. Check dependencies before changing shared components:**
+- Does this change affect anything downstream? Name the consumers, do not assume there are none.
+- Read whatever your project uses to answer that: an architecture document, a dependency map, a component inventory.
+- Grep for the component's name across the repo. Every place it appears is a consumer, including the ones no document lists.
 
 **3. Document gate result:**
-- PASS/FAIL + evidence (e.g. "BARD: 42/45 TOC entries = 93%")
+- PASS or FAIL, with evidence (for example "42 of 45 entries extracted = 93%, threshold was 90%")
 - Note scope changes
 - Update assumptions (validated/falsified/new)
 - Track cumulative token cost (if LLM-based)
@@ -299,6 +334,11 @@ These rules apply when the plan is being executed. They are also persistently st
 - No completion claim without fresh verification. Run all tests, read output, THEN claim success (`superpowers:verification-before-completion`).
 - **Re-verify EVERY phase gate actually PASSED** with its evidence (not just "the work was done"). Produce an explicit final status: either "all phases DONE + verified" OR a listed set of OPEN ITEMS. Never declare done while any gate is unproven.
 
+**1a. Verify report (Plan Completion only; if the plan named one at Stage 4):**
+- Write the sibling `<plan-filename>-verify.md` now, before declaring the plan done.
+- One entry per phase, each quoting the gate from the plan verbatim and pasting the trigger, the effect and the consumer evidence.
+- Template: `.claude/templates/verify-report-template.md` in a project install, or `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install.
+
 **1b. Deferred & follow-up disclosure (required before declaring done):**
 - Anything that could NOT be completed - a verification left untested, a phase only partially done, an issue found-but-unfixed - MUST be recorded as a follow-up task AND in the closeout, stating WHAT it is and WHY (a short reason: time-dependent / external-blocker / risky-no-rollback / needs-design / out-of-scope). Never silently drop it. If nothing was deferred, say so explicitly.
 
@@ -309,25 +349,30 @@ These rules apply when the plan is being executed. They are also persistently st
 - Check symlinks (no circular references)
 
 **3. Dependencies and Registration:**
-When new components are created, register them at all relevant locations:
-- `_stats.json` - update counts
-- `_graph/cache/context-router.json` - keywords for discoverability
-- `.claude/detection-index.json` - plain-text triggers (if command)
-- `_graph/knowledge-nodes.json` - entity in graph
-- `_graph/edges.json` - relationships to other nodes
-- `.claude/SYSTEM-MAP.md` - component inventory + changelog
-- `knowledge/index.md` - KB index (if template/pattern/learning)
+A component that exists but is registered nowhere is not connected, and nothing
+will fail to tell you so. For every new component, walk the places your project
+uses to find things and register it in each one. In most setups that means some
+subset of:
+- the index or manifest that records what exists
+- whatever makes it discoverable: a router, a keyword index, a command registry
+- the dependency or reference graph, if the project keeps one
+- the architecture or component map humans read
+- the docs index
+
+List the ones your project actually has, then check each. Grep for an existing
+sibling component and follow every place its name appears; that finds registries
+a checklist would miss.
 
 **4. Documentation:**
 - README sections for new modules
 - API documentation for new endpoints
 - Inline code documentation where not self-explanatory
 
-**5. Persistence (Log/Memory/Kairn):**
-- `_memory/projects/{project}.json` → update progress, phase, next step
-- `kn_learn` → significant decisions, patterns, gotchas
-- `_memory/experiences/` → new experiences if learned
-- Create handoff if session ends before completion
+**5. Persistence:**
+Whatever survives the session is what the next person or agent starts from.
+- Update the project's progress or status record: current phase, next action.
+- Record significant decisions, patterns and gotchas wherever your setup keeps them, whether that is a knowledge base, an ADR directory, or a plain notes file.
+- Write a handoff if the session ends before the plan does.
 
 **6. Replanning on gate failure:**
 1. Triage - classify trigger type
@@ -360,4 +405,3 @@ When new components are created, register them at all relevant locations:
 - 21 anti-patterns to check (not 12)
 - 8 domains to detect (not 6)
 - NEVER claim a stage is complete without having actually run the corresponding skill/tool
-- Execution Rules (Stage 5) are also in `knowledge/rules/workflow/plan-execution.md` (intentional duplication)

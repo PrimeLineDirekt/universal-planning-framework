@@ -28,6 +28,23 @@ pass=0; fail=0
 ok()   { printf 'PASS  %s\n' "$1"; pass=$((pass+1)); }
 bad()  { printf 'FAIL  %s\n' "$1"; fail=$((fail+1)); }
 chk()  { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1  expected[$3] got[$2]"; fi; }
+
+# How many files setup.sh should install, taken from the source rather than
+# hardcoded, so adding a file to .claude/ does not silently stale this suite.
+# Safe as a count ONLY because case 1b diffs the installed tree against the
+# source independently; a count alone would pass on the wrong files.
+# These six patterns are a DELIBERATE DUPLICATE of setup.sh's collector (its `case`
+# in the collect step) and must be updated in lockstep with it. They are not derived
+# from it: nothing enforces the match. If they drift, an editor's .swp file inflates
+# PAYLOAD while setup.sh correctly skips it, and the suite fails naming an installer
+# defect that does not exist.
+PAYLOAD=$(find "$REPO/.claude" -type f \
+  ! -name '.DS_Store' ! -name 'Thumbs.db' \
+  ! -name '*.swp' ! -name '*.swo' ! -name '*~' ! -name '.#*' \
+  -print0 | tr -cd '\0' | wc -c | tr -d ' ')
+# A PAYLOAD of 0 would make cases 1a and 11 pass against an installer that
+# installed nothing, which is the exact class this file exists to catch.
+[ "$PAYLOAD" -gt 0 ] || { echo "PAYLOAD resolved to 0 - no source files found" >&2; exit 2; }
 # Same trap as setup.sh's mode_of: `-f` is "format" on BSD stat and "filesystem
 # status" on GNU stat, so the BSD form succeeds on Linux with the wrong answer.
 # Validate that the result is octal rather than trusting the exit status.
@@ -44,10 +61,11 @@ mode_bits() {
 T="$LAB/clean"; mkdir -p "$T"
 "$REPO/setup.sh" "$T" --skip-existing >"$LAB/c1.log" 2>&1
 n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
-chk "1a clean target installs all 7 files" "$n" "7"
+chk "1a clean target installs the whole payload" "$n" "$PAYLOAD"
 # Counting files says nothing about their CONTENT. Without this, an installer
 # that truncated every copy would pass the whole suite.
-if diff -r -x '.DS_Store' "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
+if diff -r -x '.DS_Store' -x 'Thumbs.db' -x '*.swp' -x '*.swo' -x '*~' -x '.#*' \
+     "$REPO/.claude" "$T/.claude" >"$LAB/c1.diff" 2>&1; then
   ok "1b installed tree is byte-identical to the source"
 else
   bad "1b installed tree differs from the source (see $LAB/c1.diff)"
@@ -143,7 +161,7 @@ chk "10 non-TTY default kept user file" "$(cat "$T/.claude/rules/universal-plann
 T="$LAB/my project dir"; mkdir -p "$T"
 "$REPO/setup.sh" "$T" --skip-existing >"$LAB/c11.log" 2>&1
 n=$(find "$T/.claude" -type f 2>/dev/null | wc -l | tr -d ' ')
-chk "11 target path with a space works" "$n" "7"
+chk "11 target path with a space works" "$n" "$PAYLOAD"
 
 # --------------------------------------------------------------- case 12 ----
 # .claude itself is a symlink.

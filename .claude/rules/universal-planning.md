@@ -66,7 +66,7 @@ Runs BEFORE writing a single line of the plan. Not a rigid checklist - a thinkin
 **5 CORE Sections (always required):**
 
 1. **Context & Why** - Why this exists, what problem it solves. Max 3 sentences. NOT "improve X" but WHY improve X.
-   - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details — pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
+   - **Behavior Description** *(optional)*: What the feature DOES from the user's perspective, in tech-agnostic language. 3-5 sentences max. No implementation details, pure behavior. Useful when Context & Why explains the problem but not the intended experience. Example: *"Users can authenticate via Google or GitHub. Existing accounts with matching email are automatically linked. Session persists for 30 days."*
 2. **Success Criteria** - Measurable outcomes, not activities. Includes NOT-scope and FAILED conditions (kill criteria + timeout). Red flag: if you can't write a FAILED condition, criteria are too vague.
    - **Quality bar for FAILED conditions** *(holdout-verified 2026-05-13)*: each FAILED condition must have a MEASURABLE threshold AND a TIMEOUT. Bad: "if it doesn't work, abort". Good: "if test pass rate < 80% after 3 days, abort". Vague conditions without measurable threshold or timeout do NOT count.
    - **Acceptance Criteria (GWT)** *(optional)*: Given/When/Then format for testable behavior specs. Complements FAILED conditions: FAILED covers what must NOT happen, GWT covers what MUST happen. Example: *"Given a new user, When they click 'Sign in with Google' and authorize, Then they are redirected to the dashboard with a valid session."* Use when behavior has multiple paths or edge cases worth specifying upfront.
@@ -96,7 +96,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 
 **Review Checkpoints:** Every 2 phases of implementation, a review checkpoint is mandatory. For security-sensitive work, every phase. Review checkpoints are binary gates: "Code review confirms no critical issues" or "Cross-reference check: new code follows existing patterns."
 
-**18 CONDITIONAL Sections (add when relevant):**
+**19 CONDITIONAL Sections (add when relevant):**
 
 - **Rollback / Undo Strategy** - Trigger, steps, data recovery, duration, point of no return. *(Activate: changes hard to reverse)*
 - **Risk Assessment** - Likelihood, impact, mitigation, detection trigger per risk. *(Activate: high stakes or complexity >= 5 phases)*
@@ -107,8 +107,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 - **Security & Privacy** - Sensitive data, threats, controls, audit method. *(Activate: sensitive data or access involved)*
 - **Resume Protocol** - TL;DR (update each session), context load order, last completed, next action, blockers. *(Activate: >10h effort, multi-session)*
 - **Incremental Delivery** - MVP definition, "good enough" threshold, natural stopping points. *(Activate: >5 phases or >20h effort)*
-- **Delegation & Team Strategy** - Who/what per phase, interface contracts, verification of delegated output. *(Activate: work can be parallelized)*
-- **Execution Vehicle & Orchestration** - per-phase execution vehicle (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) + per-stage model tier, auto-inferred at Stage 0.5. Collapses to one `Default Vehicle` line, renders only deviations; selection is always silent. Rubric: `.claude/rules/vehicle-selection.md` in a project install, or the `vehicle-selection` skill in a plugin install. *(Activate: ALWAYS - every plan gets a Default Vehicle)*
+- **Execution Vehicle & Orchestration** - who or what runs each phase, the interface contract for delegated work, and how its output is verified. Also the per-phase execution vehicle (single agent / sub-agents / agent team / background session / dynamic workflow / goal-loop) + per-stage model tier, auto-inferred at Stage 0.5. Collapses to one `Default Vehicle` line, renders only deviations; selection is always silent. Rubric: `.claude/rules/vehicle-selection.md` in a project install, or the `vehicle-selection` skill in a plugin install. *(Activate: ALWAYS - every plan gets a Default Vehicle)*
 - **Dependencies & Blockers** - Type, status, fallback, lead time per dependency. *(Activate: external dependencies exist)*
 - **Related Work & Integration** - Project, relationship type, coordination needs. *(Activate: connects to other projects)*
 - **Timeline & Deadlines** - Duration per phase with 20%+ buffer, hard deadline + consequence. *(Activate: hard deadlines exist)*
@@ -116,6 +115,7 @@ Review: [what gets reviewed] [by whom/what] [pass criteria]
 - **Reference Library** - Official docs, best practices, standards consulted. Format: `[source] | [version/date] | [what it informed] | [link]`. **Mandatory for Software, Data, Infrastructure domains when plan has 3+ phases.** Should be embedded/linked in final deliverable. *(Activate: coding domains, or any plan consulting external sources)*
 - **Learning & Knowledge Capture** - What was learned, where captured, when, for whom. *(Activate: research, multi-session, AI agent plans, new technology)*
 - **Feedback Architecture** - What feedback collected, how routed back, decision threshold. *(Activate: iterative work, user-facing features, content series)*
+- **Verify Report** - a sibling `<plan>-verify.md` proving each Phase Gate on three legs: what TRIGGERED the work, what EFFECT it had on real system state, and whether the downstream CONSUMER can use the result. A leg you cannot show is deferred, not done. Decided at Stage 4, written at Stage 5. Template: `.claude/templates/verify-report-template.md` in a project install, `${CLAUDE_PLUGIN_ROOT}/.claude/templates/verify-report-template.md` in a plugin install, or https://raw.githubusercontent.com/primeline-ai/universal-planning-framework/main/.claude/templates/verify-report-template.md if you installed the rulebook alone. *(Activate: Grade B or A plans that ship real artifacts)*
 - **Completion Gate** - Before declaring a plan DONE, verify: (1) Registration - all artifacts registered where they belong, (2) Connections - cross-references and relationships established, (3) Documentation - README, CHANGELOG, indexes updated, (4) Orphan Detection - no unreferenced files or partial work, (5) Consistency - versions, counts, terms consistent across all files. Each project defines its own registration points. *(Activate: multi-file changes, system integration work, plans producing artifacts that must be registered somewhere. Skip: single-file changes, purely internal work)*
 
 ---
@@ -150,7 +150,7 @@ Stress-test the plan from 6 adversarial perspectives without human input. Purpos
 
 After creating the plan, run:
 
-1. **Execution Vehicle Validation** - confirm the Stage 0.5 vehicle + per-stage model routing fit each phase's scope; multi-agent vehicles have interface contracts + a routing plan.
+1. **Execution Vehicle Validation** - confirm the Stage 0.5 vehicle + per-stage model tier fit each phase's scope, and that multi-agent vehicles have interface contracts and a routing plan. Do NOT re-infer vehicles here; Stage 0.5 already decided, this validates.
 2. **Research Needs** - Which phases need web research during execution? Mark them now.
 3. **Review Gates** - After which phases stop and validate? Confirm gates are in place.
 4. **Anti-Pattern Check** - Quick scan against 21 anti-patterns below. Fix any found.
@@ -202,12 +202,12 @@ When a replanning trigger fires, follow these 6 steps:
 Automatically include relevant CONDITIONAL sections based on domain (8 domains):
 
 **Software Development:**
-- Dependencies, Risks, Rollback, Post-Completion, Delegation, Reference Library
+- Dependencies, Risks, Rollback, Post-Completion, Execution Vehicle & Orchestration, Reference Library
 - Completion Gate: exports/imports valid, tests cover new code, API docs updated, package/module registered in project index
 - Review Checkpoints: every 2 phases. Scope-based phases.
 
 **Multi-Agent / AI System:**
-- Dependencies, Risks, Delegation, Security, Post-Completion, Reference Library
+- Dependencies, Risks, Execution Vehicle & Orchestration, Security, Post-Completion, Reference Library
 - Completion Gate: agent configs registered, prompts versioned, model settings documented, tool registrations complete
 - Review Checkpoints: every 2 phases. Scope-based phases.
 
@@ -242,6 +242,8 @@ Automatically include relevant CONDITIONAL sections based on domain (8 domains):
 - Union of all relevant sections from matched domains
 - Completion Gate: union of all relevant domain checks verified
 - Review Checkpoints: use the most conservative interval from matched domains
+
+> Note: **Execution Vehicle & Orchestration** is satisfied by the plan-level `Default Vehicle` line plus any per-phase deviation tags. On a uniform plan that is the whole section, and no named heading appears. Do not report it missing.
 
 ---
 
@@ -333,9 +335,9 @@ STAGE 1 (Plan):
   CORE:  Context [+Behavior] | Success (FAILED [+GWT]) | Assumptions (IMPACT) |
          Phases (Gates + Review) | Verification (Auto + Manual + Observability)
   COND:  Rollback | Risk | Post-Completion | Budget | User Validation | Legal |
-         Security | Resume | Incremental | Delegation | Dependencies |
+         Security | Resume | Incremental | Execution Vehicle | Dependencies |
          Related Work | Timeline | Stakeholders | Reference Library | Learning |
-         Feedback | Completion Gate
+         Feedback | Verify Report | Completion Gate
   Phases: Scope-based (coding) or time-based (non-coding). Review checkpoint every 2 phases.
   Confidence: High / Medium / Low
 
@@ -346,7 +348,7 @@ STAGE 1.5 (Hardening, Optional):
   Output: Hardened plan + Hardening Log
 
 STAGE 2 (Meta) - 7 Checks:
-  M.1 Delegation | M.2 Research | M.3 Review Gates | M.4 Anti-Patterns (21)
+  M.1 Vehicle Validation | M.2 Research | M.3 Review Gates | M.4 Anti-Patterns (21)
   M.5 Cold Start Test | M.6 Plan Hygiene | M.7 Discovery Consolidation
 
 REPLAN (6 steps): Triage | Scope damage | Update in place | Recheck | Re-confirm confidence | Resume

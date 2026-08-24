@@ -128,7 +128,7 @@ After the interview, update the plan file with discoveries.
 
 After completing the interview, append an `## Interview Log` section to the plan:
 
-```markdown
+````markdown
 ## Interview Log
 
 **Date**: [date] | **Mode**: Interactive / Self | **Domain**: [detected]
@@ -141,4 +141,4 @@ After completing the interview, append an `## Interview Log` section to the plan
 
 **Plan changes made**: [list of additions/clarifications]
 **Grade before**: [C/B/A] | **Grade after**: [C/B/A]
-```
+````

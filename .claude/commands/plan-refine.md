@@ -147,7 +147,7 @@ After all 6 perspectives, run this final check:
 1. Apply all structural fixes directly to the plan content
 2. Append a `## Stage 1.5: Hardening Log` section at the end with:
 
-```markdown
+````markdown
 ## Stage 1.5: Hardening Log
 
 **Ran**: [date] | **Mode**: Simple / Team | **Perspectives**: [N]/6
@@ -158,7 +158,7 @@ After all 6 perspectives, run this final check:
 | ... | ... | ... |
 
 **Discovery Consolidation**: [All Stage 0 findings addressed / N findings orphaned - see notes]
-```
+````
 
 3. Write the hardened plan back to the original file
 

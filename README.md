@@ -1,7 +1,7 @@
 # Universal Planning Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.3.1-green.svg)]()
 [![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-orange.svg)]()
 
 
@@ -45,27 +45,39 @@ curl -o .claude/rules/universal-planning.md \
 
 ## What Makes This Different
 
-**Formal reasoning foundation (DSV).** Most plans fail not because validation is missing, but because the wrong question gets validated. The framework is built on Decompose-Suspend-Validate - a principle that forces you to challenge your interpretation before committing to it. [See Theoretical Foundation below.](#theoretical-foundation-dsv)
+Three things carry most of the value.
 
-**FAILED conditions are mandatory.** Every plan must define when to kill the project - not just when it succeeds. No FAILED condition = zombie project (anti-pattern #11).
+**Discovery happens before the plan, not during execution.** Stage 0 runs 12 checks
+before a single phase is written, and the one that pays for the rest is the AHA check:
+*does something that already exists do most of this?* A custom CMS becomes Strapi at
+90% of what you needed. Fifty blog posts become five deep ones plus derivatives. The
+cheapest moment to find that out is before the plan exists.
 
-**21 anti-patterns with detection rules.** Not guidelines - specific detection rules that catch vague gates ("looks good"), hallucinated estimates, assumed facts, discovery amnesia, and 17 more. Categorized as 12 Core + 5 AI-Specific + 4 Quality.
+**Every plan says when to kill it.** A FAILED condition is mandatory, with a
+measurable threshold and a timeout. A plan that only defines success is a plan that
+cannot end, which the framework tracks as anti-pattern #11.
 
-**Autonomous hardening (Stage 1.5).** Run `/plan-refine` and 6 adversarial perspectives stress-test your plan without asking you a single question. The Pedantic Lawyer catches vague gates. The Devil's Advocate challenges your core assumption. You get back a hardened plan with a change log.
+**The plan is checked by something other than its author.** `/plan-refine` runs six
+adversarial perspectives over it without asking you anything. The Pedantic Lawyer
+rejects a gate that says "looks good". The Devil's Advocate attacks the core
+assumption. You get back a hardened plan and a log of what changed.
 
-**Execution vehicle selection.** A plan decides not just *what* to do but *how each phase runs* - the optimal execution vehicle (single agent, parallel sub-agents, an agent team, a background session, a dynamic multi-agent workflow, or a goal-loop) plus the model tier per stage. It is inferred silently as a planning output, never via a prompt - so trivial plans stay frictionless while complex ones get the orchestration they need. `/plan-review` then flags an under-specified vehicle or a stage routed to a needlessly expensive model. [See below.](#execution-vehicle-selection)
+Underneath those:
 
-**Execution discipline (not just planning).** Plans are executed, not dumbly worked through. A code review runs after every phase; each phase is **empirically verified** - you run or trigger what it built and confirm it actually works, not "code written"; and before a plan is declared done the framework re-checks that every gate truly passed and **discloses anything deferred** (what + why) as a follow-up task - never silently dropped. (Stage 5 execution rules in `.claude/commands/plan-new.md`.)
-
-**Quality rubric with teeth.** Grade C/B/A based on objective criteria. Numbers need sources. Gates must be observable. Delegated work needs input/output specs. FAILED conditions must be measurable.
-
-**Behavior specs + acceptance criteria.** Optional Behavior Description (tech-agnostic, what the feature does) and Given/When/Then acceptance criteria give plans testable behavior coverage without forcing a separate spec document.
-
-**Reference Library.** For coding domains, plans must link the official docs they consulted - so the person maintaining the output has the same sources.
-
-**8 domain detection.** Software, AI/Agent, Business, Content, Infrastructure, Data & Analytics, Research, Multi-Domain. Each domain auto-includes relevant sections.
+| | |
+|---|---|
+| **A reasoning principle, not a checklist** | Built on Decompose-Suspend-Validate. Most plans fail because the wrong question was validated, not because validation was missing. [How it maps to the stages](#theoretical-foundation-dsv) |
+| **21 anti-patterns with detection rules** | Not advice. Specific rules that catch vague gates, hallucinated estimates, assumed facts and discovery amnesia. 12 core, 5 AI-specific, 4 quality |
+| **Execution vehicle per phase** | The plan decides not only what to do but how each phase runs, from a single agent up to a multi-agent workflow, plus the model tier. Inferred silently, never prompted, so small plans stay frictionless. [Details](#execution-vehicle-selection) |
+| **Discipline after the plan, too** | A review after each phase, each phase empirically verified rather than declared done, and anything deferred disclosed with a reason instead of dropped. A Grade B or A plan can ship a [verify report](.claude/templates/verify-report-template.md) proving each gate on three legs: trigger, effect, and whether the consumer can use the result |
+| **A rubric that can fail you** | Grade C, B or A on objective criteria. Numbers need sources, gates must be observable, delegated work needs input and output specs |
+| **8 domains, detected** | Software, AI/Agent, Business, Content, Infrastructure, Data, Research, Multi-Domain. Each pulls in the sections it needs |
+| **Optional behavior specs** | A tech-agnostic Behavior Description and Given/When/Then criteria, for testable coverage without a separate spec document |
+| **Reference Library** | Coding plans link the official docs they consulted, so whoever maintains the result has the same sources |
 
 ## 5-Minute Quick Start
+
+If you installed the plugin, every command below is namespaced: `/plan-new` becomes `/universal-planning-framework:plan-new`. If you installed into your project's `.claude/`, use the short form as written.
 
 ### 1. Create a plan
 ```bash
@@ -144,7 +156,7 @@ This works standalone - even without the full framework. Use it before any decis
 
 **Optional structured formats**: Behavior Description captures what a feature DOES in tech-agnostic language (3-5 sentences). Given/When/Then acceptance criteria complement FAILED conditions - FAILED covers what must NOT happen, GWT covers what MUST happen.
 
-**18 CONDITIONAL sections** (domain-detected): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Delegation, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Completion Gate.
+**19 CONDITIONAL sections** (most domain-detected, a few triggered by size, grade or risk instead): Rollback, Risk, Post-Completion, Budget, User Validation, Legal, Security, Resume Protocol, Incremental Delivery, Execution Vehicle & Orchestration, Dependencies, Related Work, Timeline, Stakeholders, Reference Library, Learning & Knowledge Capture, Feedback Architecture, Verify Report, Completion Gate.
 
 **Coding domains** size phases by scope (files, features, tests), not hours. Non-coding domains use time estimates as rough guides.
 
@@ -188,8 +200,8 @@ For multi-agent vehicles the plan also names the **model tier per stage**: the s
 
 | Domain | Key Sections | Phase Sizing | Review Frequency |
 |--------|-------------|-------------|-----------------|
-| Software Development | Rollback, Risk, Delegation, Reference Library | Scope-based | Every 2 phases |
-| Multi-Agent / AI | Risk, Delegation, Security, Reference Library | Scope-based | Every 2 phases |
+| Software Development | Rollback, Risk, Execution Vehicle & Orchestration, Reference Library | Scope-based | Every 2 phases |
+| Multi-Agent / AI | Risk, Execution Vehicle & Orchestration, Security, Reference Library | Scope-based | Every 2 phases |
 | Business / Strategy | Timeline, Budget, Stakeholders, Validation | Time-based | Per milestone |
 | Content / Marketing | Timeline, Validation, Legal, Feedback Architecture | Time-based | Per draft |
 | Infrastructure / DevOps | Rollback, Risk, Dependencies, Reference Library | Mixed | Every phase |
@@ -214,15 +226,22 @@ For multi-agent vehicles the plan also names the **model tier per stage**: the s
 
 ## Philosophy
 
-Traditional planning: Goal - Approach - Steps - Execute - "Oh crap, we didn't consider X."
+```
+Traditional   Goal -> Approach -> Steps -> Execute -> "we did not consider X"
+This          Discovery -> Constraints -> Assumptions -> THEN plan
+```
 
-This framework inverts it: **Discovery - Constraints - Assumptions - THEN plan.**
+Stage 0 is where you find out that the "simple feature" touches six systems, that the
+existing code already does 70% of it, that the timeline was off by 3x, and that there
+is a legal requirement nobody mentioned.
 
-Stage 0 is where you find out your "simple feature" touches 6 systems, the existing code does 70% of what you need, your timeline was off by 3x, and there's a legal requirement you didn't know about.
+The [DSV principle](#theoretical-foundation-dsv) explains why that works. Most
+"overlooked" requirements were never missing from the problem. They were missing from
+the planner's reading of it, and no amount of validating the wrong question recovers
+them.
 
-The [DSV principle](#theoretical-foundation-dsv) explains why this works: most "overlooked" requirements weren't missing from the problem space - they were missing from the planner's interpretation of it. By forcing decomposition and suspension before validation, the framework catches gaps at the cheapest possible moment: before a single line of the plan is written.
-
-The framework is domain-agnostic. Use it for software features, business launches, content creation, data pipelines, research projects - anything that needs a plan.
+Nothing here is specific to code. Software features, business launches, content,
+data pipelines, research: if it needs a plan, it fits.
 
 ## Examples
 
@@ -244,44 +263,30 @@ Found a gap the framework doesn't catch? [Open an issue](https://github.com/prim
 
 ## The Ecosystem
 
-UPF is one piece of a progression. Each tier works independently - no hard dependencies.
+UPF is one piece of a progression. Each tier works on its own, with no hard dependencies between them.
 
 ```
-You're here          You want this            Install this
------------          -------------            ------------
-Raw Claude Code  ->  Session memory       ->  Starter System (free)
-                 ->  Workflow skills      ->  + Skills Bundle (free)
-                 ->  Deep planning        ->  + UPF (free) <- you are here
-                 ->  Deep analysis        ->  + Quantum Lens (free)
-                 ->  AI-powered system    ->  + Course (paid)
+You're here          You want this               Install this
+-----------          -------------               ------------
+Raw Claude Code  ->  Session memory          ->  Starter System (free)
+                 ->  Workflow skills         ->  + Skills Bundle (free)
+                 ->  Deep planning           ->  + UPF (free) <- you are here
+                 ->  Deep analysis           ->  + Quantum Lens (free)
+                 ->  A self-improving setup  ->  + Evolving Lite (free)
 ```
 
-| Component | What It Does | Link |
-|-----------|-------------|------|
-| **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) |
-| **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) |
-| **UPF** | Universal Planning Framework with deep multi-stage planning | You're reading it |
-| **Quantum Lens** | Multi-perspective analysis + solution engineering (7 cognitive lenses) | [GitHub](https://github.com/primeline-ai/quantum-lens) |
-| **Course** | Kairn + Synapse: AI-powered memory and knowledge graphs | [primeline.cc](https://primeline.cc) |
+| Component | What it does | Links |
+|-----------|--------------|-------|
+| **Starter System** | Session memory, handoffs, context awareness | [GitHub](https://github.com/primeline-ai/claude-code-starter-system) · [Blog](https://primeline.cc/blog/session-management) |
+| **Skills Bundle** | 5 workflow skills: debugging, delegation, planning, code review, config architecture | [GitHub](https://github.com/primeline-ai/primeline-skills) · [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
+| **UPF** | This repo. Discovery-first planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
+| **Quantum Lens** | Multi-perspective analysis and solution engineering, 7 cognitive lenses | [GitHub](https://github.com/primeline-ai/quantum-lens) · [Blog](https://primeline.cc/blog/quantum-lens-multi-agent-analysis) |
+| **Evolving Lite** | Self-improving Claude Code plugin: memory, delegation, self-correction | [GitHub](https://github.com/primeline-ai/evolving-lite) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
+| **Kairn** | Persistent knowledge graph with context routing | [GitHub](https://github.com/primeline-ai/kairn) · [Blog](https://primeline.cc/blog/knowledge-architecture) |
+| **tmux Orchestration** | Parallel Claude Code sessions with heartbeat monitoring | [GitHub](https://github.com/primeline-ai/claude-tmux-orchestration) · [Blog](https://primeline.cc/blog/tmux-orchestration) |
 
-The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version - use it when the stakes are high enough to justify Stage 0 discovery.
+The Skills Bundle includes a lightweight `plan-and-execute` skill for everyday planning. UPF is the deep version, for when the stakes justify Stage 0 discovery.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file.
-
----
-
-## Part of the PrimeLine Ecosystem
-
-| Tool | What It Does | Deep Dive |
-|------|-------------|-----------|
-| [**Evolving Lite**](https://github.com/primeline-ai/evolving-lite) | Self-improving Claude Code plugin - memory, delegation, self-correction | [Blog](https://primeline.cc/blog/knowledge-architecture) |
-| [**Kairn**](https://github.com/primeline-ai/kairn) | Persistent knowledge graph with context routing for AI | [Blog](https://primeline.cc/blog/knowledge-architecture) |
-| [**tmux Orchestration**](https://github.com/primeline-ai/claude-tmux-orchestration) | Parallel Claude Code sessions with heartbeat monitoring | [Blog](https://primeline.cc/blog/tmux-orchestration) |
-| [**UPF**](https://github.com/primeline-ai/universal-planning-framework) | 3-stage planning with adversarial hardening | [Blog](https://primeline.cc/blog/planning-framework-dsv-reasoning) |
-| [**Quantum Lens**](https://github.com/primeline-ai/quantum-lens) | 7 cognitive lenses for multi-perspective analysis | [Blog](https://primeline.cc/blog/quantum-lens-multi-agent-analysis) |
-| [**PrimeLine Skills**](https://github.com/primeline-ai/primeline-skills) | 5 production-grade workflow skills for Claude Code | [Blog](https://primeline.cc/blog/score-based-auto-delegation) |
-| [**Starter System**](https://github.com/primeline-ai/claude-code-starter-system) | Lightweight session memory and handoffs | [Blog](https://primeline.cc/blog/session-management) |
-
-**[@PrimeLineAI](https://x.com/PrimeLineAI)** · [primeline.cc](https://primeline.cc) · [Free Guide](https://primeline.cc/guide)
+MIT. See [LICENSE](LICENSE).
